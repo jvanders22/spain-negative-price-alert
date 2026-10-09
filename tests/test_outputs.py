@@ -64,5 +64,6 @@ def test_draft_hashtag_free_and_trims_long_windows(golden):
     s = sm.summarise(golden)
     s["le0_windows"] = [f"{h:02d}:00–{h:02d}:15" for h in range(0, 24, 2)]
     text = draft.post_text(s)
-    assert len(text) <= 280 and "quarter-hours, 00:00–00:15 +11 more. Low: -€0.01/MWh." in text  # list shortened
+    # the window list is shortened to "first +N more" rather than dropped
+    assert len(text) <= 280 and "quarter-hours, 00:00–00:15 +11 more. Low: -€0.01/MWh." in text
     assert text.endswith("Source: OMIE")
