@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jvanders22/spain-negative-price-alert/blob/main/src/negprice/latest.schema.json",
+  "title": "Spain day-ahead zero-price alert: latest day summary",
+  "description": "OMIE day-ahead prices (Spain zone) for one delivery day. Prices in EUR/MWh, times local Europe/Madrid HH:MM, window ends exclusive.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "units",
+    "timezone",
+    "attribution",
+    "date",
+    "weekday",
+    "n_periods",
+    "mtu_min",
+    "n_le0",
+    "n_neg",
+    "n_cheap",
+    "cheap_threshold",
+    "le0_windows",
+    "neg_windows",
+    "cheap_windows",
+    "min_price",
+    "min_time",
+    "max_price",
+    "max_time",
+    "mean_price",
+    "midday_mean",
+    "evening_mean",
+    "evening_minus_midday",
+    "cheapest_3h",
+    "is_alert",
+    "ytd_zero_days",
+    "ytd_zero_days_prev_year",
+    "zero_days_last_365",
+    "hourly",
+    "source"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "units": {
+      "const": "EUR/MWh"
+    },
+    "timezone": {
+      "const": "Europe/Madrid"
+    },
+    "attribution": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+    },
+    "weekday": {
+      "enum": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    "n_periods": {
+      "enum": [
+        23,
+        24,
+        25,
+        92,
+        96,
+        100
+      ]
+    },
+    "mtu_min": {
+      "enum": [
+        15,
+        60
+      ]
+    },
+    "n_le0": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_neg": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_cheap": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cheap_threshold": {
+      "type": "number"
+    },
+    "le0_windows": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^\\d\\d:\\d\\d–\\d\\d:\\d\\d$"
+      }
+    },
+    "neg_windows": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^\\d\\d:\\d\\d–\\d\\d:\\d\\d$"
+      }
+    },
+    "cheap_windows": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^\\d\\d:\\d\\d–\\d\\d:\\d\\d$"
+      }
+    },
+    "min_price": {
+      "type": "number"
+    },
+    "min_time": {
+      "type": "string",
+      "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$"
+    },
+    "max_price": {
+      "type": "number"
+    },
+    "max_time": {
+      "type": "string",
+      "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$"
+    },
+    "mean_price": {
+      "type": "number"
+    },
+    "midday_mean": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "evening_mean": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "evening_minus_midday": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cheapest_3h": {
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "mean"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$"
+        },
+        "mean": {
+          "type": "number"
+        }
+      }
+    },
+    "is_alert": {
+      "type": "boolean"
+    },
+    "ytd_zero_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ytd_zero_days_prev_year": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "zero_days_last_365": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hourly": {
+      "type": "array",
+      "minItems": 23,
+      "maxItems": 25,
+      "items": {
+        "type": "object",
+        "required": [
+          "hour",
+          "mean"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "hour": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$"
+          },
+          "mean": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "file",
+        "version",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
