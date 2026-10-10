@@ -23,8 +23,9 @@ V=$(git rev-parse --show-toplevel)/.cursor/skills/verify-negprice/scripts/verify
 ## Launch
 
 ```bash
+unset VERIFY_RUN_ID       # drop a pin left over from an earlier run in this shell
 $V launch                 # optional: $V launch my-run-id
-eval "$($V env)"          # exports RUN_ID ROOT URL LIVE EVID NEGPRICE REPO
+eval "$($V env)"          # exports VERIFY_RUN_ID RUN_ID ROOT URL LIVE EVID NEGPRICE REPO
 ```
 
 What it does: installs `.venv` with `pip install -e ".[dev]"` if `.venv/bin/negprice` is missing; extracts
@@ -33,8 +34,15 @@ uncommitted edits to data/site are NOT in the scratch root; rebuild with `negpri
 when verifying a code change); starts `python3 -m http.server <free port> --bind 127.0.0.1` on
 `$ROOT/site`. Ready when it prints `READY run=... url=http://127.0.0.1:<port>/ ...`.
 
-Isolation: each run has its own scratch root, port and Chrome profile, so runs can go side by side. Never
-point `--root` at the checkout during verification. Teardown is `$V cleanup` (see Cleanup).
+Isolation: each run has its own scratch root, port, evidence dir and Chrome profile. `launch` records the
+last launched run in `.verify-evidence/.current`; `eval "$($V env)"` pins your shell to YOUR run by
+exporting `VERIFY_RUN_ID`, which every later `$V` command uses first. For runs side by side, give each a
+distinct id (`$V launch run-a`) and eval `env` right after its launch, before anyone launches another;
+or set `VERIFY_RUN_ID=<id>` explicitly. Never point `--root` at the checkout during verification.
+Teardown is `$V cleanup` (see Cleanup).
+
+If your tool runner kills background processes between tool calls (seen with Codex's sandbox), Doctor
+reports the server pid gone: run launch, env, doctor, the drive and cleanup in ONE shell invocation.
 
 ## Doctor
 
@@ -50,7 +58,8 @@ first, and again whenever anything looks off. Do not drive an instance Doctor fa
 
 ## Drive
 
-Read `features/README.md`, then the feature file that matches the change. All CLI actions go through:
+Read `.cursor/skills/verify-negprice/features/README.md` (paths in this skill are relative to the repo
+root unless they start with `$`), then the matching feature file in the same directory. All CLI actions go through:
 
 ```bash
 $V cli [--offline] <feature-id> <step-name> -- <command...>
@@ -99,7 +108,8 @@ $V cleanup
 ```
 
 Stops only the server pid this run started (checked against its command line, never by process name),
-deletes `/tmp/verify-negprice-$RUN_ID` (refuses any other path), clears `.verify-evidence/.current`, then
+deletes `/tmp/verify-negprice-$RUN_ID` (refuses any other path), clears `.verify-evidence/.current` only if
+it still points at this run, then
 lists the evidence files that remain. Run it after every attempt, including failed ones. Afterwards confirm
 `git status --short` in the checkout shows no changes from the run.
 

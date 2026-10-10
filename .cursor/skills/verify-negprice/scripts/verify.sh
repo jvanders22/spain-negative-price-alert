@@ -18,7 +18,11 @@ NEGPRICE="$REPO/.venv/bin/negprice"
 PY="$REPO/.venv/bin/python"
 
 die() { echo "verify-negprice: $*" >&2; exit 2; }
-current() { [ -f "$EVID_ROOT/.current" ] || die "no active run; run 'verify.sh launch' first"; cat "$EVID_ROOT/.current"; }
+# Which run a command targets: $VERIFY_RUN_ID (exported by `env`) wins, else the last launched run.
+current() {
+  if [ -n "${VERIFY_RUN_ID:-}" ]; then echo "$VERIFY_RUN_ID"; return; fi
+  [ -f "$EVID_ROOT/.current" ] || die "no active run; run 'verify.sh launch' first"; cat "$EVID_ROOT/.current"
+}
 load() {
   RUN_ID=$(current); S="/tmp/verify-negprice-$RUN_ID"
   [ -f "$S/state.env" ] || die "scratch state $S/state.env missing (run cleaned up?)"
@@ -61,8 +65,8 @@ STATE
 
 cmd_env() {
   load
-  printf 'export RUN_ID=%q ROOT=%q URL=%q LIVE=%q EVID=%q NEGPRICE=%q REPO=%q\n' \
-    "$RUN_ID" "$ROOT" "$URL" "$LIVE" "$EVID" "$NEGPRICE" "$REPO"
+  printf 'export VERIFY_RUN_ID=%q RUN_ID=%q ROOT=%q URL=%q LIVE=%q EVID=%q NEGPRICE=%q REPO=%q\n' \
+    "$RUN_ID" "$RUN_ID" "$ROOT" "$URL" "$LIVE" "$EVID" "$NEGPRICE" "$REPO"
 }
 
 cmd_doctor() {
@@ -71,7 +75,8 @@ cmd_doctor() {
   [ -x "$NEGPRICE" ] && "$NEGPRICE" --help >/dev/null 2>&1 && ok "negprice CLI at $NEGPRICE" || bad "negprice CLI missing (launch installs it)"
   local head origin; head=$(git -C "$REPO" rev-parse --short HEAD); origin=$(git -C "$REPO" rev-parse --short origin/main 2>/dev/null || echo "?")
   [ "$head" = "$origin" ] && ok "checkout HEAD $head = origin/main" || warn "checkout HEAD $head != origin/main $origin (verifying a branch?)"
-  if [ -f "$EVID_ROOT/.current" ] && [ -f "/tmp/verify-negprice-$(cat "$EVID_ROOT/.current")/state.env" ]; then
+  local rid; rid=$(current 2>/dev/null || true)
+  if [ -n "$rid" ] && [ -f "/tmp/verify-negprice-$rid/state.env" ]; then
     load; ok "run $RUN_ID, scratch root $ROOT (built from $HEAD_SHA)"
     if kill -0 "$PID" 2>/dev/null && tr '\0' ' ' <"/proc/$PID/cmdline" | grep -q "http.server $PORT"; then
       ok "static server pid $PID is ours"
@@ -97,7 +102,7 @@ cmd_cli() {
   load; local d="$EVID/$feature"; mkdir -p "$d"
   printf '%q ' "$@" >"$d/$name.cmd"; echo >>"$d/$name.cmd"
   [ "$offline" = 1 ] && echo "# run with: unshare -rn (no network namespace)" >>"$d/$name.cmd"
-  local rc=0
+  local rc=0; export MPLCONFIGDIR="$S/mpl"; mkdir -p "$MPLCONFIGDIR"
   if [ "$offline" = 1 ]; then
     (cd "$REPO" && export ROOT URL LIVE EVID NEGPRICE REPO RUN_ID && unshare -rn "$@") >"$d/$name.out" 2>"$d/$name.err" || rc=$?
   else
@@ -136,7 +141,8 @@ cmd_stop() {
 cmd_cleanup() {
   load; cmd_stop || true
   case "$S" in /tmp/verify-negprice-*) rm -rf "$S" ;; *) die "refusing to delete $S" ;; esac
-  rm -f "$EVID_ROOT/.current"
+  # Only clear the "last launched" pointer if it still points at this run.
+  [ "$(cat "$EVID_ROOT/.current" 2>/dev/null)" = "$RUN_ID" ] && rm -f "$EVID_ROOT/.current"
   echo "removed scratch $S; evidence kept:"; find "$EVID" -type f | sort
 }
 
