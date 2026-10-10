@@ -11,6 +11,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import sys
 from email.utils import format_datetime
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -159,14 +160,27 @@ def _strip_color(n_le0: int) -> str:
 
 
 def weekly_section(root: Path) -> str:
-    """ "This week" block for index.html, from site/weekly/latest.json ("" until a week has been built)."""
+    """ "This week" block for index.html, from site/weekly/latest.json ("" until a week has been built).
+    A file that can't be read, parsed or is missing fields never fails the daily run or a rebuild: the
+    section is left out, with a warning on stderr."""
     path = Path(root) / "site" / "weekly" / "latest.json"
     if not path.exists():
         return ""
-    w = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return _weekly_section(json.loads(path.read_text(encoding="utf-8")))
+    except (OSError, ValueError, LookupError, TypeError, AttributeError) as e:
+        print(f"warning: weekly section omitted, ignoring {path} ({type(e).__name__}: {e})", file=sys.stderr)
+        return ""
+
+
+def _weekly_section(w: dict) -> str:
     e = html.escape
     z, lo, s, r = w["zero_or_below"], w["lowest"], w["midday_evening"], w["cheapest_3h"]["retail"]
-    y, end = w["zero_days_ytd"], e(w["week"]["end"])
+    y, end = w["zero_days_ytd"], e(dt.date.fromisoformat(w["week"]["end"]).isoformat())
+    counts = [z["n_le0"], z["n_periods"], z["n_neg"], z["days_with_le0"], z["days"], y["year"]]
+    counts += [y["ytd_zero_days"], y["ytd_zero_days_prev_year"]]
+    if w.get("kind") != "weekly" or not all(type(n) is int for n in counts):
+        raise ValueError("not a weekly summary with integer counts")
     estimate = (
         f" Cheapest estimated {e(r['tariff'])} 3 hours: {e(r['weekday'])} {e(r['start'])}–{e(r['end'])} at "
         f"{r['estimate_eur_kwh']:.3f} €/kWh (an <strong>estimate</strong>, not a bill)."

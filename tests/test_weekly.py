@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from conftest import synthetic_day
+from conftest import fixture_path, synthetic_day
 
 from negprice import cli, history, retail, weekly, weekly_draft, weekly_site
 from negprice import summary as sm
@@ -209,6 +209,58 @@ def test_week_over_week(root):
     assert facts(root, "2026-10-18")["week_over_week"] is None  # the week before is not in history
 
 
+def as_days(frames: list[pd.DataFrame]) -> list:
+    return [(df["ts_utc"].iloc[0].tz_convert(sm.TZ).date(), df, "") for df in frames]
+
+
+def night(day: str, price: float = 10.0, **overrides: float) -> pd.DataFrame:
+    """02:00–05:00 (indices 8..19, valle on 2.0TD every day) at ``price``, the rest of the day at 50."""
+    return flat(day, **{**{f"i{i}": price for i in range(8, 20)}, **overrides})
+
+
+def test_cheapest_window_compares_unrounded_means_across_days():
+    # Mon and Tue tie exactly at 10.00; Thu's window is 0.01/12 €/MWh cheaper and rounds to the same 10.0
+    week = [night("2026-10-05"), night("2026-10-06"), flat("2026-10-07"), night("2026-10-08", i19=9.99)]
+    week += [flat(f"2026-10-{d:02d}") for d in (9, 10, 11)]
+    assert [sm.cheapest_window(df)["mean"] for df in week[:4]] == [10.0, 10.0, 50.0, 10.0]
+    ws = weekly.cheapest_3h(as_days(week))["wholesale"]
+    assert (ws["weekday"], ws["start"], ws["end"], ws["omie_eur_mwh"]) == ("Thu", "02:00", "05:00", 10.0)
+    # a genuine tie: the earliest day wins, for the wholesale and the estimated window
+    tie = [*week[:3], flat("2026-10-08"), *week[4:]]
+    c = weekly.cheapest_3h(as_days(tie))
+    assert (c["wholesale"]["weekday"], c["retail"]["weekday"]) == ("Mon", "Mon")
+    assert (c["retail"]["start"], c["retail"]["end"], c["retail"]["periods"]) == ("02:00", "05:00", ["P3"])
+
+
+def test_cheapest_estimated_window_compares_unrounded_means_across_days():
+    # Thu is cheaper than Mon by less than the 6 decimals published for the estimate (and by less than a
+    # cent, so the wholesale windows tie in integer cents and Monday keeps that one)
+    week = [night("2026-10-05"), flat("2026-10-06"), flat("2026-10-07"), night("2026-10-08", i19=9.9996)]
+    week += [flat(f"2026-10-{d:02d}") for d in (9, 10, 11)]
+    mon, thu = (retail.cheapest_window(retail.estimate(week[i], "2.0TD"), 180) for i in (0, 3))
+    assert mon["estimate_eur_kwh"] == thu["estimate_eur_kwh"]  # identical once rounded
+    c = weekly.cheapest_3h(as_days(week))
+    assert c["retail"]["weekday"] == "Thu" and c["retail"]["estimate_eur_kwh"] == mon["estimate_eur_kwh"]
+    assert c["wholesale"]["weekday"] == "Mon"
+
+
+def test_spread_and_week_over_week_use_unrounded_means(tmp_path):
+    # 224 midday and 112 evening quarter-hours a week. One midday period at 50.90 -> midday 50.004018;
+    # one evening period at 50.60 -> evening 50.005357. Rounded first: 50.01 − 50.00 = 0.01; raw: 0.0013.
+    previous = [flat("2026-10-05", i48=50.9)] + [flat(f"2026-10-{d:02d}") for d in range(6, 12)]
+    week = [flat("2026-10-12", i48=50.9, i80=50.6)] + [flat(f"2026-10-{d}") for d in range(13, 19)]
+    write_history(tmp_path, previous + week)
+    f = facts(tmp_path, "2026-10-18")
+    s = f["midday_evening"]
+    assert (s["midday_mean"], s["evening_mean"], s["spread"]) == (50.0, 50.01, 0.0)
+    assert str(s["spread"]) == "0.0" and "unrounded" in s["definition"]
+    # previous week: midday 50.004018, evening 50 -> spread −0.004018, published 0.0 (never "-0.0");
+    # change = 0.001339 − (−0.004018) = 0.005357 -> 0.01, not the 0.0 − 0.0 of the published values
+    wow = f["week_over_week"]
+    assert (wow["spread_prev"], wow["spread_change"]) == (0.0, 0.01) and str(wow["spread_prev"]) == "0.0"
+    assert facts(tmp_path, "2026-10-11")["midday_evening"]["spread"] == 0.0
+
+
 def test_spring_forward_week_has_668_periods(tmp_path):
     days = [flat(f"2026-03-{d}") for d in range(23, 29)] + [flat("2026-03-29", i8=-1.0)]
     assert len(days[-1]) == 92
@@ -293,6 +345,45 @@ def test_png_is_byte_identical_on_rerun(root, tmp_path_factory):
     rows = weekly_site.panel_rows(f)
     assert len(rows) == 5 and [r[0] for r in rows[:3]] == ["10", "-5.00 €/MWh", "+23.50 €/MWh"]
     assert "estimate" in rows[3][1] and rows[4][0] == "4 days"
+    assert rows[0][2] == "on 3 of 7 days · previous week: 6"
+    assert rows[2][1] == "evening minus midday (previous week: +1.34)"
+    assert weekly_site.panel_rows(facts(root, "2026-10-18"))[0][2] == "on 1 of 7 days"
+
+
+BROKEN_WEEKLY = {
+    "malformed": '{"schema_version": 1, "kind": "weekly", "week": {',
+    "not an object": "[1, 2]\n",
+    "incomplete": '{"schema_version": 1, "kind": "weekly", "week": {"end": "2026-10-25", "label": "x"}}\n',
+    "wrong types": None,  # the built file with a count turned into text, set in the test
+}
+
+
+@pytest.mark.parametrize("case", BROKEN_WEEKLY)
+def test_broken_weekly_latest_json_never_fails_run_or_rebuild(root, case, capsys):
+    assert run(root, "--week-ending", "2026-10-25") == 0
+    latest, index = root / "site/weekly/latest.json", root / "site/index.html"
+    assert "<h2>This week</h2>" in index.read_text()
+    text = BROKEN_WEEKLY[case]
+    if text is None:
+        doc = json.loads(latest.read_text())
+        doc["zero_or_below"]["n_le0"] = "ten"
+        text = json.dumps(doc)
+    capsys.readouterr()
+    for command in (
+        ["rebuild", "--root", str(root)],
+        ["run", "--root", str(root), "--file", str(fixture_path("20261010")), "--force"],
+    ):
+        latest.write_text(text, encoding="utf-8")
+        index.unlink()
+        assert cli.main(command) == 0
+        err = capsys.readouterr().err
+        assert "warning: weekly section omitted" in err and "latest.json" in err
+        page = index.read_text()
+        assert "This week" not in page and "weekly/" not in page and "<h1>" in page
+        assert latest.read_text(encoding="utf-8") == text  # left alone: `negprice weekly` repairs it
+    # the next weekly run restores latest.json and the section
+    assert run(root, "--week-ending", "2026-10-25") == 0
+    assert "<h2>This week</h2>" in index.read_text() and capsys.readouterr().err == ""
 
 
 def test_idempotent_and_latest_tracks_the_newest_week(root, monkeypatch, capsys):
@@ -309,6 +400,11 @@ def test_idempotent_and_latest_tracks_the_newest_week(root, monkeypatch, capsys)
     assert "week ending 2026-10-25: already built" in capsys.readouterr().out
     assert gh.read_text() == "processed=false\ndate=2026-10-25\n"
     assert snapshot(root) == first and summary.read_text().count("## Weekly summary") == 1
+
+    assert "- previous week (ending 2026-10-18): periods <= 0: 6, on 1 of 7 days, spread 1.34 €/MWh" in (
+        summary.read_text()
+    )
+    assert "(was " not in summary.read_text()
 
     # a missing PNG is rebuilt byte-identically; a rebuild of the daily outputs keeps the weekly section
     (root / "site/weekly/2026-10-25.png").unlink()
@@ -404,9 +500,16 @@ def test_draft_text_en_and_es(root):
     assert not re.search(r"\d\.\d|€\d", every_line.replace("2.0TD", "")) and set(es.splitlines()) & set(
         lines.values()
     )
-    assert lines["low"] == "Mínimo: -5,00 €/MWh, el mié a las 15:00."
+    assert lines["low"] == "Mínimo: -5,00 €/MWh, el miércoles a las 15:00."
     assert lines["spread"] == "La tarde salió 24 €/MWh más cara que el mediodía."
-    assert lines["retail"].endswith("dom 00:15–02:15 CET, ~0,126 €/kWh.")
+    assert lines["retail"] == (
+        "Las 3 h más baratas con 2.0TD (estimación mía): el domingo, 00:15–02:15 CET, ~0,126 €/kWh."
+    )
+    # full weekday names in Spanish prose, for every day of the week; never the three-letter forms
+    names = [weekly_draft._weekday(f"2026-10-{d}", "es") for d in range(19, 26)]
+    assert names == ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+    assert not re.search(r"\b(lun|mar|mié|jue|vie|sáb|dom)\b", every_line)
+    assert len(es) <= 280 and len(en) <= 280
     assert lines["ytd"] == "Días con precio cero en 2026: 4 (2 a estas alturas de 2025)."
     assert weekly_draft._lines_en(f)["low"] == "Low: -€5.00/MWh, Wed 15:00."
     assert weekly_draft.week_range({"week": {"start": "2026-09-28", "end": "2026-10-04"}}, "en") == (

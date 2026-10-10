@@ -99,19 +99,26 @@ def windows(df: pd.DataFrame, mask: pd.Series, day: dt.date) -> list[str]:
     return out
 
 
-def cheapest_window(df: pd.DataFrame, minutes: int = 180) -> dict:
-    """Lowest-mean contiguous ``minutes`` span (earliest on ties). Sums integer cents so ties are exact."""
+def cheapest_window_sum(df: pd.DataFrame, minutes: int = 180) -> tuple[int, int, int]:
+    """``(first index, number of periods, sum in integer cents)`` of the lowest-mean contiguous ``minutes``
+    span (earliest on ties). Integer cents, so ties and comparisons between days are exact."""
     mtu = int(df["mtu_min"].iloc[0])
     k = minutes // mtu
     cents = [round(p * 100) for p in df["price_es"]]
     sums = [sum(cents[i : i + k]) for i in range(len(cents) - k + 1)]
     i = sums.index(min(sums))
+    return i, k, sums[i]
+
+
+def cheapest_window(df: pd.DataFrame, minutes: int = 180) -> dict:
+    """Lowest-mean contiguous ``minutes`` span (earliest on ties). Sums integer cents so ties are exact."""
+    i, k, total = cheapest_window_sum(df, minutes)
     day = df["ts_utc"].iloc[0].tz_convert(TZ).date()
     start = df["ts_utc"].iloc[i]
     return {
         "start": _hhmm(start, day),
         "end": _hhmm(start + pd.Timedelta(minutes=minutes), day),
-        "mean": r2(sums[i] / k / 100),
+        "mean": r2(total / k / 100),
     }
 
 

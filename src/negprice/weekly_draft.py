@@ -28,7 +28,8 @@ OPINIONS = {
         "Con consumo flexible, yo iría a por las horas baratas, no a por la media diaria.",
     ],
 }
-ES_WEEKDAYS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
+# Spanish prose uses the full weekday name ("el martes a las 14:00"); months stay short in the date range.
+ES_WEEKDAYS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 ES_MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
 UNITS = {
     "en": {15: ("quarter-hours", "quarter-hour"), 60: ("hours", "hour"), None: ("periods", "period")},
@@ -115,7 +116,7 @@ def _lines_es(f: dict) -> dict[str, str]:
         "low": f"Mínimo: {es_num(lo['price'])} €/MWh, el {_weekday(lo['date'], 'es')} a las {lo['time']}.",
         "spread": f"La tarde salió {es_num(abs(spread), _dp(spread))} €/MWh más "
         f"{'cara' if spread >= 0 else 'barata'} que el mediodía.",
-        "retail": f"Las 3 h más baratas con 2.0TD (estimación mía): {_weekday(r['date'], 'es')} "
+        "retail": f"Las 3 h más baratas con 2.0TD (estimación mía): el {_weekday(r['date'], 'es')}, "
         f"{r['start']}–{r['end']}, ~{es_num(r['estimate_eur_kwh'], 3)} €/kWh."
         if r["available"]
         else "",
@@ -179,12 +180,12 @@ def fact_lines(f: dict) -> list[str]:
     ]
     if wow:
         out.append(
-            f"vs week ending {wow['previous_week_ending']}: periods <= 0 {wow['n_le0_change']:+d} (was "
-            f"{wow['n_le0_prev']}), days {wow['days_with_le0_change']:+d} (was {wow['days_with_le0_prev']}), "
-            f"spread {wow['spread_change']:+.2f} (was {wow['spread_prev']:.2f}) €/MWh"
+            f"previous week (ending {wow['previous_week_ending']}): periods <= 0: {wow['n_le0_prev']}, on "
+            f"{wow['days_with_le0_prev']} of {z['days']} days, spread {wow['spread_prev']:.2f} €/MWh "
+            f"(change {wow['spread_change']:+.2f})"
         )
     else:
-        out.append("vs previous week: not available (previous week is not complete in history)")
+        out.append("previous week: not available (not complete in history)")
     return out
 
 

@@ -89,11 +89,11 @@
     "midday_mean": 107.55,
     "evening_mean": 222.98,
     "spread": 115.43,
-    "definition": "Mean price of all periods of the week starting 10:00–17:59 (midday) and 19:00–22:59 (evening), Europe/Madrid; spread = evening − midday."
+    "definition": "Mean price of all periods of the week starting 10:00–17:59 (midday) and 19:00–22:59 (evening), Europe/Madrid; spread = evening − midday, computed from the unrounded means and then rounded."
   },
   "cheapest_3h": {
     "minutes": 180,
-    "note": "Cheapest contiguous 180-minute windows are searched within each delivery day (no window spans midnight); the week's figure is the lowest of the seven daily windows, earliest day on ties.",
+    "note": "Cheapest contiguous 180-minute windows are searched within each delivery day (no window spans midnight); the week's figure is the lowest of the seven daily windows, compared before rounding, earliest day on ties.",
     "retail": {
       "label": "estimate",
       "tariff": "2.0TD",

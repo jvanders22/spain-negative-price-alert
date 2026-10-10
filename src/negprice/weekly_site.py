@@ -74,12 +74,12 @@ def panel_rows(f: dict) -> list[tuple[str, str, str]]:
             f"{z['n_le0']}",
             f"periods at or below €0 ({z['n_neg']} negative)",
             f"on {z['days_with_le0']} of {z['days']} days"
-            + (f" · previous week: {wow['n_le0_prev']} ({wow['n_le0_change']:+d})" if wow else ""),
+            + (f" · previous week: {wow['n_le0_prev']}" if wow else ""),
         ),
         (f"{lo['price']:.2f} €/MWh", "lowest price of the week", f"{low_day} at {lo['time']}"),
         (
             f"{_signed(s['spread'])} €/MWh",
-            "evening minus midday" + (f" (previous week {_signed(wow['spread_prev'])})" if wow else ""),
+            "evening minus midday" + (f" (previous week: {_signed(wow['spread_prev'])})" if wow else ""),
             f"midday 10–18h {s['midday_mean']:.2f} · evening 19–23h {s['evening_mean']:.2f} €/MWh",
         ),
         (retail[0], "cheapest 2.0TD 3 hours (estimate, taxes included)", retail[1]),

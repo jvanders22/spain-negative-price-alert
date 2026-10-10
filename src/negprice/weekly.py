@@ -9,6 +9,7 @@ zero-price days. Buckets and thresholds are the daily ones in ``summary``; the 2
 from __future__ import annotations
 
 import datetime as dt
+from fractions import Fraction
 
 import pandas as pd
 
@@ -20,11 +21,12 @@ TARIFF = "2.0TD"
 WINDOW_MINUTES = 180
 WINDOW_NOTE = (
     "Cheapest contiguous 180-minute windows are searched within each delivery day (no window spans "
-    "midnight); the week's figure is the lowest of the seven daily windows, earliest day on ties."
+    "midnight); the week's figure is the lowest of the seven daily windows, compared before rounding, "
+    "earliest day on ties."
 )
 SPREAD_NOTE = (
     "Mean price of all periods of the week starting 10:00–17:59 (midday) and 19:00–22:59 (evening), "
-    "Europe/Madrid; spread = evening − midday."
+    "Europe/Madrid; spread = evening − midday, computed from the unrounded means and then rounded."
 )
 
 
@@ -111,26 +113,37 @@ def lowest(days: list) -> dict:
     }
 
 
-def midday_evening(days: list) -> dict:
+def _raw_means(days: list) -> tuple[float, float]:
+    """Unrounded (midday, evening) mean prices of the week."""
     week = pd.concat([df for _, df, _ in days], ignore_index=True)
     local_hour = week["ts_utc"].dt.tz_convert(sm.TZ).dt.hour
-    midday = sm.r2(week["price_es"][local_hour.isin(sm.MIDDAY_HOURS)].mean())
-    evening = sm.r2(week["price_es"][local_hour.isin(sm.EVENING_HOURS)].mean())
+    midday = float(week["price_es"][local_hour.isin(sm.MIDDAY_HOURS)].mean())
+    evening = float(week["price_es"][local_hour.isin(sm.EVENING_HOURS)].mean())
+    return midday, evening
+
+
+def midday_evening(days: list) -> dict:
+    """Only the published values are rounded: the spread is the rounded difference of the raw means, so it
+    can differ by 0.01 from ``evening_mean - midday_mean``."""
+    midday, evening = _raw_means(days)
     return {
-        "midday_mean": midday,
-        "evening_mean": evening,
+        "midday_mean": sm.r2(midday),
+        "evening_mean": sm.r2(evening),
         "spread": sm.r2(evening - midday),
         "definition": SPREAD_NOTE,
     }
 
 
 def _wholesale_window(days: list) -> dict:
+    """Days are compared on the exact window mean (integer cents / periods); only the winner is rounded."""
     best = None
     for day, df, _ in days:
-        w = sm.cheapest_window(df, WINDOW_MINUTES)
-        if best is None or w["mean"] < best[1]["mean"]:
-            best = (day, w)
-    day, w = best
+        _, k, cents = sm.cheapest_window_sum(df, WINDOW_MINUTES)
+        mean = Fraction(cents, k)
+        if best is None or mean < best[0]:
+            best = (mean, day, df)
+    _, day, df = best
+    w = sm.cheapest_window(df, WINDOW_MINUTES)
     return {
         "date": day.isoformat(),
         "weekday": f"{day:%a}",
@@ -149,12 +162,17 @@ def _retail_window(days: list) -> dict:
         reason = f"tariff tables cover {tf.VALID_FROM}..{tf.VALID_TO} only"
         return {**head, "available": False, "reason": reason}
     a = retail.Assumptions()
+    column = "estimate_eur_kwh"
     best = None
     for day, df, _ in days:
-        w = retail.cheapest_window(retail.estimate(df, TARIFF, a), WINDOW_MINUTES)
-        if best is None or w["estimate_eur_kwh"] < best[1]["estimate_eur_kwh"]:
-            best = (day, w)
-    day, w = best
+        est = retail.estimate(df, TARIFF, a)
+        i, k = retail._best_start(est, WINDOW_MINUTES, column)
+        # exact mean in the 1e-9 units of ``retail._best_start``: compared unrounded, earliest day on ties
+        mean = Fraction(sum(round(v * 1e9) for v in est[column].iloc[i : i + k]), k)
+        if best is None or mean < best[0]:
+            best = (mean, day, est)
+    _, day, est = best
+    w = retail.cheapest_window(est, WINDOW_MINUTES, column)
     return {
         **head,
         "available": True,
@@ -194,12 +212,13 @@ def zero_days_ytd(sunday: dt.date, sunday_is_alert: bool, daily: pd.DataFrame) -
     }
 
 
-def week_over_week(zero: dict, spread: dict, previous: list | None, previous_sunday: dt.date) -> dict | None:
+def week_over_week(days: list, previous: list | None, previous_sunday: dt.date) -> dict | None:
     """Change in the zero-or-below counts and the spread against the previous week; None if that week is
-    not complete in history."""
+    not complete in history. The spread change is the rounded difference of the unrounded spreads."""
     if previous is None:
         return None
-    z, s = zero_or_below(previous), midday_evening(previous)
+    zero, z, s = zero_or_below(days), zero_or_below(previous), midday_evening(previous)
+    (midday, evening), (midday_prev, evening_prev) = _raw_means(days), _raw_means(previous)
     return {
         "previous_week_ending": previous_sunday.isoformat(),
         "n_le0_prev": z["n_le0"],
@@ -209,7 +228,7 @@ def week_over_week(zero: dict, spread: dict, previous: list | None, previous_sun
         "days_with_le0_prev": z["days_with_le0"],
         "days_with_le0_change": zero["days_with_le0"] - z["days_with_le0"],
         "spread_prev": s["spread"],
-        "spread_change": sm.r2(spread["spread"] - s["spread"]),
+        "spread_change": sm.r2((evening - midday) - (evening_prev - midday_prev)),
     }
 
 
@@ -235,7 +254,7 @@ def facts(periods: pd.DataFrame, daily: pd.DataFrame, sunday: dt.date) -> dict:
         "midday_evening": spread,
         "cheapest_3h": cheapest_3h(days),
         "zero_days_ytd": zero_days_ytd(sunday, zero["by_day"][-1]["n_le0"] > 0, daily),
-        "week_over_week": week_over_week(zero, spread, week_days(periods, previous_sunday), previous_sunday),
+        "week_over_week": week_over_week(days, week_days(periods, previous_sunday), previous_sunday),
         "sources": {
             "omie": [{"date": d.isoformat(), **sm.source_info(src)} for d, _, src in days],
             "tariffs": tf.SOURCES,
