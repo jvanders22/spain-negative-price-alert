@@ -1,4 +1,4 @@
-"""``negprice`` command line: run (daily), rebuild, seed, backfill, estimate."""
+"""``negprice`` command line: run (daily), pvpc-refresh (evening), rebuild, seed, backfill, estimate."""
 
 from __future__ import annotations
 
@@ -127,6 +127,48 @@ def cmd_run(a: argparse.Namespace) -> int:
     return 0
 
 
+def refresh_pvpc(root: Path, days: list[dt.date]) -> list[dt.date]:
+    """Fetch and cache PVPC for the ``days`` that have no usable cache file; returns the newly cached days.
+    Never raises on PVPC or network errors (prints a warning). An unreadable cache file is fetched again."""
+    new = []
+    for day in days:
+        try:
+            if pvpc.load_cached(root, day) is not None:
+                print(f"pvpc {day}: already cached")
+                continue
+        except Exception as e:  # noqa: BLE001 - a bad cache file is replaced below
+            print(
+                f"warning: pvpc {day}: unusable cache ({type(e).__name__}: {e}); fetching again",
+                file=sys.stderr,
+            )
+        try:
+            found = pvpc.fetch_and_cache(root, day) is not None
+        except Exception as e:  # noqa: BLE001 - PVPC is optional context
+            print(f"warning: pvpc {day}: skipped ({type(e).__name__}: {e})", file=sys.stderr)
+            continue
+        print(f"pvpc {day}: {'cached' if found else 'not published yet'}")
+        if found:
+            new.append(day)
+    return new
+
+
+def cmd_pvpc_refresh(a: argparse.Namespace) -> int:
+    """Evening job: PVPC for D is published ~20:15 Madrid on D-1, hours after the OMIE run."""
+    root = Path(a.root)
+    dates = sorted(history.read_daily(root)["date"])
+    if not dates:
+        print("history is empty: nothing to refresh")
+        _gh_output(False, None)
+        return 0
+    latest = dt.date.fromisoformat(dates[-1])
+    new = refresh_pvpc(root, [latest - dt.timedelta(days=1), latest])
+    if new:
+        outputs.build(root)
+        print(f"rebuilt outputs with PVPC context (latest: {latest})")
+    _gh_output(bool(new), latest)
+    return 0
+
+
 def cmd_rebuild(a: argparse.Namespace) -> int:
     root = Path(a.root)
     history.rebuild_daily(root)
@@ -182,11 +224,11 @@ def estimate_text(report: dict) -> str:
         f"{report['mtu_min']} min)",
         *report["warnings"],
         "",
-        f"{'hour':<6}{'period':<7}{'OMIE €/MWh':>11}{'estimate €/kWh':>16}{'PVPC €/kWh*':>13}",
+        f"{'hour':<11}{'period':<7}{'OMIE €/MWh':>11}{'estimate €/kWh':>16}{'PVPC €/kWh*':>13}",
     ]
     for h in report["hourly"]:
         out.append(
-            f"{h['hour']:<6}{h['period']:<7}{h['omie_eur_mwh']:>11.2f}"
+            f"{h['hour']:<11}{h['period']:<7}{h['omie_eur_mwh']:>11.2f}"
             f"{_cell(h['estimate_eur_kwh'], '.4f'):>16}{_cell(h['pvpc_eur_kwh'], '.4f'):>13}"
         )
     lo, hi = report["min_estimate"], report["max_estimate"]
@@ -262,6 +304,7 @@ def parser() -> argparse.ArgumentParser:
     r.add_argument("--force", action="store_true", help="reprocess even if already in history")
     r.add_argument("--file", help="read a local marginalpdbc file instead of fetching")
     r.add_argument("--deadline", type=_hhmm, help="Madrid HH:MM after which 'not published' is an error")
+    add("pvpc-refresh", cmd_pvpc_refresh, "cache PVPC for the latest stored day (and the day before)")
     add("rebuild", cmd_rebuild, "regenerate daily.csv and outputs from periods.csv (no network)")
     s = add("seed", cmd_seed, "load hourly history before 2025-10-01 from hourly.parquet")
     s.add_argument("--parquet", required=True)

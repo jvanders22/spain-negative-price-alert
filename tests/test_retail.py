@@ -190,3 +190,35 @@ def test_fall_back_day_has_100_periods_and_hour_2_twice():
         assert list(h["omie_eur_mwh"][2:4]) == [10.0, 20.0]
         w = retail.cheapest_window(est, 60)
         assert (w["start"], w["end"]) == ("02:00 CEST", "02:00 CET")
+
+
+def test_hourly_labels_disambiguate_the_repeated_hour_on_the_100_period_fixture():
+    est = retail.estimate(load_day("20251026"), "2.0TD", A, allow_other_year=True)  # 2025: other year
+    assert len(est) == 100
+    h = retail.hourly(est)
+    assert list(h["hour"][:5]) == ["00:00", "01:00", "02:00 CEST", "02:00 CET", "03:00"]
+    assert h["hour"].is_unique and len(h) == 25 and h["hour"].iloc[-1] == "23:00"
+    records = retail.day_report(est, A)["hourly"]
+    assert [(r["hour"], r["ts_utc"], r["local_hour"]) for r in records[2:4]] == [
+        ("02:00 CEST", "2025-10-26T00:00:00Z", 2),
+        ("02:00 CET", "2025-10-26T01:00:00Z", 2),
+    ]
+    assert len({r["ts_utc"] for r in records}) == 25
+    assert retail.hourly_records(retail.estimate(load_day("20260329"), "2.0TD", A))[2]["hour"] == "03:00"
+
+
+@pytest.mark.parametrize("minutes", [0, -60, 10, 50, 170, 181])
+def test_window_length_must_be_a_positive_multiple_of_the_period(golden, minutes):
+    est = retail.estimate(golden, "2.0TD", A)
+    with pytest.raises(ValueError, match="not a positive multiple of the 15-minute period"):
+        retail.cheapest_window(est, minutes)
+    with pytest.raises(ValueError, match="not a positive multiple"):
+        retail.compare_windows(est, minutes)
+
+
+def test_window_length_ok_and_too_long(golden):
+    est = retail.estimate(golden, "2.0TD", A)
+    assert retail.cheapest_window(est, 15)["start"] == "15:00"
+    assert retail.cheapest_window(est, 1440)["start"] == "00:00"
+    with pytest.raises(ValueError, match="cannot fit"):
+        retail.cheapest_window(est, 1455)

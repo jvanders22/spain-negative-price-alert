@@ -157,7 +157,8 @@ def estimate(
 
 def hourly(est_df: pd.DataFrame) -> pd.DataFrame:
     """Means per local clock hour (23/24/25 rows; grouped on the UTC hour, so the repeated 02:00 hour of
-    the fall-back day gives two rows with ``local_hour`` 2)."""
+    the fall-back day gives two rows with ``local_hour`` 2, labelled "02:00 CEST" and "02:00 CET" like the
+    summary windows). ``ts_utc`` is the start of the hour."""
     g = est_df.groupby(est_df["ts_utc"].dt.floor("h"), sort=True)
     out = g.agg(
         local_hour=("local_hour", "first"),
@@ -167,7 +168,8 @@ def hourly(est_df: pd.DataFrame) -> pd.DataFrame:
         estimate_eur_kwh=("estimate_eur_kwh", "mean"),
         pvpc_eur_kwh=("pvpc_eur_kwh", "mean"),
     ).reset_index()
-    out.insert(1, "hour", out["ts_utc"].dt.tz_convert(sm.TZ).dt.strftime("%H:%M"))
+    day = _day(est_df)
+    out.insert(1, "hour", [sm._hhmm(ts, day) for ts in out["ts_utc"]])
     return out
 
 
@@ -178,8 +180,11 @@ def _day(est_df: pd.DataFrame) -> dt.date:
 def _best_start(est_df: pd.DataFrame, minutes: int, column: str) -> tuple[int, int]:
     """(index of the first period, number of periods) of the lowest-mean contiguous ``minutes`` span;
     earliest wins ties. Sums integers (1e-9 units) so ties are exact, like ``summary.cheapest_window``."""
-    k = minutes // int(est_df["mtu_min"].iloc[0])
-    if not 0 < k <= len(est_df):
+    mtu = int(est_df["mtu_min"].iloc[0])
+    if minutes <= 0 or minutes % mtu:
+        raise ValueError(f"window of {minutes} minutes is not a positive multiple of the {mtu}-minute period")
+    k = minutes // mtu
+    if k > len(est_df):
         raise ValueError(f"cannot fit a {minutes}-minute window in {len(est_df)} periods")
     units = [round(v * 1e9) for v in est_df[column]]
     sums = [sum(units[i : i + k]) for i in range(len(units) - k + 1)]
@@ -252,6 +257,7 @@ def _extreme(est_df: pd.DataFrame, i: int) -> dict:
 def hourly_records(est_df: pd.DataFrame) -> list[dict]:
     return [
         {
+            "ts_utc": f"{h.ts_utc:%Y-%m-%dT%H:%M:%SZ}",
             "hour": h.hour,
             "local_hour": int(h.local_hour),
             "period": h.period,

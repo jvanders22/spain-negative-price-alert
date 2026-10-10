@@ -90,6 +90,12 @@ def load(root: Path, day: dt.date, fetch: bool = True) -> pd.DataFrame | None:
     cached = load_cached(root, day)
     if cached is not None or not fetch:
         return cached
+    return fetch_and_cache(root, day)
+
+
+def fetch_and_cache(root: Path, day: dt.date) -> pd.DataFrame | None:
+    """Download PVPC for ``day`` and cache the raw response when it holds values (replacing any cache
+    file). None when it is not published yet."""
     text = fetch_text(day)
     df = parse(text, day) if text else None
     if df is not None:

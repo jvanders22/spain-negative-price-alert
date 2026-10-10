@@ -133,7 +133,7 @@ def test_estimate_command(tmp_path, capsys, monkeypatch):
     assert out.startswith("2.0TD retail price ESTIMATE, Sat 2026-10-10")
     assert "Takeaway: Cheapest wholesale 3h: 13:30–16:30 (-0.01 €/MWh)" in out
     assert "ASSUMPTION" in out and "BOE-A-2025-26705" in out and "Label: estimate." in out
-    assert "00:00 P3 " in out and "0.2182" in out
+    assert "00:00      P3 " in out and "0.2182" in out
     assert len(out_csv.read_text().splitlines()) == 97
     assert (tmp_path / "data/pvpc/2026-10-10.json").exists()
 
@@ -176,3 +176,114 @@ def test_run_caches_pvpc_but_never_fails_on_it(tmp_path, monkeypatch, capsys):
 def test_run_from_file_is_offline(tmp_path, monkeypatch):
     monkeypatch.setattr(pvpc, "fetch_text", lambda d: pytest.fail("network used"))
     assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+
+
+def refresh(root):
+    return cli.main(["pvpc-refresh", "--root", str(root)])
+
+
+def test_pvpc_refresh_unpublished_then_published_then_cached(tmp_path, monkeypatch, capsys):
+    gh = tmp_path / "gh_output"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(gh))
+    assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+    assert "Not available for this day" in (tmp_path / "site/index.html").read_text()
+    before = snapshot(tmp_path)
+
+    gh.write_text("")
+    monkeypatch.setattr(pvpc, "fetch_text", lambda d: '{"message":"No values for specified archive"}')
+    capsys.readouterr()
+    assert refresh(tmp_path) == 0
+    out = capsys.readouterr().out
+    assert "pvpc 2026-10-09: not published yet" in out and "pvpc 2026-10-10: not published yet" in out
+    assert gh.read_text() == "processed=false\ndate=2026-10-10\n"
+    assert not (tmp_path / "data/pvpc").exists() and snapshot(tmp_path) == before
+
+    gh.write_text("")
+    texts = {dt.date(2026, 10, 9): pvpc_text("20261009"), dt.date(2026, 10, 10): pvpc_text("20261010")}
+    monkeypatch.setattr(pvpc, "fetch_text", texts.get)
+    assert refresh(tmp_path) == 0
+    assert "pvpc 2026-10-10: cached" in capsys.readouterr().out
+    assert gh.read_text() == "processed=true\ndate=2026-10-10\n"
+    assert sorted(p.name for p in (tmp_path / "data/pvpc").iterdir()) == [
+        "2026-10-09.json",
+        "2026-10-10.json",
+    ]
+    page = (tmp_path / "site/index.html").read_text()
+    assert "Not available for this day" not in page and "<td>0.218</td>" in page
+    published = snapshot(tmp_path)
+    assert published != before
+
+    gh.write_text("")
+    monkeypatch.setattr(pvpc, "fetch_text", lambda d: pytest.fail("network used"))
+    assert refresh(tmp_path) == 0
+    assert "pvpc 2026-10-10: already cached" in capsys.readouterr().out
+    assert gh.read_text() == "processed=false\ndate=2026-10-10\n"
+    assert snapshot(tmp_path) == published
+
+
+def test_pvpc_refresh_never_fails_on_pvpc_errors(tmp_path, monkeypatch, capsys):
+    gh = tmp_path / "gh_output"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(gh))
+    assert refresh(tmp_path) == 0  # empty history
+    assert gh.read_text() == "processed=false\ndate=\n"
+    assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+
+    def boom(day):
+        raise RuntimeError("ESIOS down")
+
+    for fetch in (boom, lambda d: "<html>oops</html>", lambda d: pvpc_text("20261009")):  # last: wrong day
+        gh.write_text("")
+        monkeypatch.setattr(pvpc, "fetch_text", fetch)
+        assert refresh(tmp_path) == 0
+        assert "warning: pvpc 2026-10-10: skipped" in capsys.readouterr().err
+        assert (
+            "processed=" in gh.read_text() and not pvpc.cache_path(tmp_path, dt.date(2026, 10, 10)).exists()
+        )
+
+
+def test_pvpc_refresh_replaces_an_unusable_cache_file(tmp_path, monkeypatch, capsys):
+    assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+    cache = pvpc.cache_path(tmp_path, dt.date(2026, 10, 10))
+    cache.parent.mkdir(parents=True)
+    cache.write_text("{not json")
+    monkeypatch.setattr(pvpc, "fetch_text", lambda d: pvpc_text(f"{d:%Y%m%d}"))
+    assert refresh(tmp_path) == 0
+    assert "unusable cache" in capsys.readouterr().err
+    assert cache.read_text() == pvpc_text("20261010")
+
+
+def _corrupt(path: Path) -> None:
+    path.write_text("{not json")
+
+
+def _wrong_date(path: Path) -> None:
+    path.write_text(pvpc_text("20261009"))
+
+
+def _unreadable(path: Path) -> None:
+    path.mkdir()  # reading it raises OSError whatever the user's permissions
+
+
+@pytest.mark.parametrize("damage", [_corrupt, _wrong_date, _unreadable])
+def test_bad_pvpc_cache_never_aborts_run_or_rebuild(tmp_path, capsys, damage):
+    cache = pvpc.cache_path(tmp_path, dt.date(2026, 10, 10))
+    cache.parent.mkdir(parents=True)
+    damage(cache)
+    assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+    assert "pvpc 2026-10-10: ignoring cache" in capsys.readouterr().err
+    first = snapshot(tmp_path)
+    assert "Not available for this day" in first["site/index.html"].decode()
+    assert b'"available": false' in first["site/estimate/latest.json"]
+    assert cli.main(["rebuild", "--root", str(tmp_path)]) == 0
+    assert "pvpc 2026-10-10: ignoring cache" in capsys.readouterr().err
+    assert snapshot(tmp_path) == first
+
+
+def test_workflow_routes_evening_crons_to_pvpc_refresh():
+    text = (Path(__file__).parents[1] / ".github/workflows/alert.yml").read_text()
+    for cron in ("17 19 * * *", "17 20 * * *"):
+        assert f'- cron: "{cron}"' in text and f'"$SCHEDULE" = "{cron}"' in text
+    assert "SCHEDULE: ${{ github.event.schedule }}" in text and "negprice pvpc-refresh" in text
+    assert "git add data/history data/pvpc site drafts" in text
+    assert 'git commit -m "data: PVPC context for $DATE"' in text
+    assert 'git commit -m "data: OMIE day-ahead for $DATE"' in text
