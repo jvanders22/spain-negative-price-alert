@@ -7,3 +7,6 @@ __pycache__/
 .env
 # X post drafts: written locally / uploaded as a workflow artifact, never committed
 drafts/
+
+# verify-negprice evidence (screenshots, transcripts): kept locally, never committed
+.verify-evidence/
