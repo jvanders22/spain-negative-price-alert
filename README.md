@@ -37,7 +37,8 @@ repo turns it into a small, tested, idempotent data pipeline.
 
 Code: `src/negprice/` — `omie.py`/`http.py` (vendored fetch + parse), `summary.py` (pure classification
 and validation), `history.py` (CSV store), `outputs.py` (JSON/RSS/PNG/HTML/draft files), `draft.py`
-(post text), `cli.py`.
+(post text), `cli.py`. Retail estimate: `tariffs.py` (official 2026 tables and period calendars),
+`retail.py` (formula, cheapest windows), `pvpc.py` (PVPC context), `retail_site.py` (site files).
 
 ## Definitions
 
@@ -81,10 +82,35 @@ don't commit). The Pages deploy job exists but is disabled unless the repo varia
 | `site/charts/<date>.png`, `site/charts/latest.png` | one bar per period; ≤0 and ≤10 € periods highlighted |
 | `site/index.html` | static page (no external JS/CSS/fonts): latest day, chart, 30-day strip, YTD |
 | `drafts/<date>.md` | X post draft (≤280 chars) + the facts it was built from. Not published, not under `site/` |
+| `site/estimate/latest.json`, `site/estimate/<date>-2.0TD.csv`, `-3.0TD.csv` | retail price **estimate** for the latest day, per period |
+| `site/wholesale-vs-bill.html` | "Wholesale is not your bill" explainer with a worked example from the latest day |
+| `data/pvpc/<date>.json` | cached raw PVPC responses (ESIOS archive 70), context column only |
 
 Charts and drafts are drawn for the processed day and the latest day only (not for every backfilled day).
 All outputs are derived from `data/history/` and contain no wall-clock timestamps, so re-running a day or
 running `rebuild` leaves them byte-identical.
+
+## Retail estimate
+
+A €0 wholesale price is not a €0 bill. `negprice estimate` turns a stored day into an **estimated** price
+paid per kWh for the 2.0TD, 3.0TD or 6.1TD access tariff (peninsula): OMIE price plus assumed adjustment
+services, losses and retailer margin, plus the official 2026 peajes and cargos for the tariff period of
+each quarter-hour, plus IEE and IVA. It then compares the cheapest window by estimated price with the
+cheapest wholesale window.
+
+```bash
+negprice estimate --date 2026-10-09                        # 2.0TD, default assumptions
+negprice estimate --date 2026-10-09 --tariff 3.0TD --margin 5 --no-pvpc --csv out.csv
+```
+
+Example, Fri 9 Oct 2026, 2.0TD: the cheapest wholesale 3 hours are 11:15–14:15 at 0.00 €/MWh, but most
+of that is punta, so it would cost an estimated 0.172 €/kWh. The cheapest estimated 3 hours are
+14:00–17:00 (llano) at 0.091 €/kWh. On Sat 10 Oct (all valle) both rankings pick 13:30–16:30.
+
+The same numbers for the latest day are on the site page, with the explainer
+`site/wholesale-vs-bill.html`. Tables, sources (BOE ids), formula, assumptions and limits:
+[docs/tariffs.md](docs/tariffs.md). It is an estimate built on stated assumptions, for 2026 only, without
+the power term; it is not a bill and not advice. PVPC is shown as a before-tax context column.
 
 ## Run locally
 
@@ -101,6 +127,7 @@ negprice run                                   # tomorrow (Europe/Madrid)
 negprice run --date 2026-10-10 --force         # reprocess a day
 negprice run --file tests/fixtures/marginalpdbc_20261010.1   # offline, from a local file
 negprice rebuild                               # daily.csv + site/ + latest draft from periods.csv, no network
+negprice estimate --date 2026-10-10            # retail price estimate for a stored day (see above)
 
 ruff check . && ruff format --check . && pytest -q   # tests use fixtures only, no network
 ```
@@ -149,7 +176,8 @@ day-ahead market, Spain zone. Wholesale prices, not your retail bill."
 ## Limits
 
 - **Wholesale, not retail.** A zero or negative day-ahead price is not a free electricity bill; retail
-  tariffs add network charges, taxes and margins.
+  tariffs add network charges, taxes and margins. The retail figures are estimates with their own limits
+  (see [docs/tariffs.md](docs/tariffs.md)).
 - A file republished by OMIE as `.2` after a day was processed is not picked up automatically; rerun with
   `--force`, which probes for and uses the highest published version (recorded in `daily.csv` and `latest.json`).
 - GitHub's schedule can be delayed or skipped under load; the multiple crons are the mitigation.

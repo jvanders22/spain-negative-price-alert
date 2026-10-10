@@ -26,3 +26,15 @@ def synthetic_day(day: str, prices: list[float], mtu: int = 15) -> pd.DataFrame:
 @pytest.fixture
 def golden() -> pd.DataFrame:
     return load_day("20261010")
+
+
+def pvpc_text(day: str) -> str:
+    return (FIXTURES / f"esios_pvpc_{day}.json").read_text()
+
+
+@pytest.fixture(autouse=True)
+def no_pvpc_network(monkeypatch):
+    """Tests never hit ESIOS: by default PVPC looks "not published yet"."""
+    from negprice import pvpc
+
+    monkeypatch.setattr(pvpc, "fetch_text", lambda day: None)

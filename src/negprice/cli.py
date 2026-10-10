@@ -1,4 +1,4 @@
-"""``negprice`` command line: run (daily), rebuild, seed, backfill."""
+"""``negprice`` command line: run (daily), rebuild, seed, backfill, estimate."""
 
 from __future__ import annotations
 
@@ -11,8 +11,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import draft, history, omie, outputs
+from . import draft, history, omie, outputs, pvpc, retail, retail_site
 from . import summary as sm
+from . import tariffs as tf
 
 
 def now_madrid() -> dt.datetime:
@@ -76,6 +77,17 @@ def step_summary(s: dict) -> str:
     )
 
 
+def cache_pvpc(root: Path, days: list[dt.date]) -> None:
+    """Best effort: cache PVPC (context column of the estimate) for ``days``. Never fails the run; D+1 PVPC
+    is only published around 20:15 Madrid, so the delivery day is usually missing at run time."""
+    for day in days:
+        try:
+            found = pvpc.load(root, day) is not None
+            print(f"pvpc {day}: {'cached' if found else 'not published yet'}")
+        except Exception as e:  # noqa: BLE001 - PVPC is optional context
+            print(f"pvpc {day}: skipped ({type(e).__name__}: {e})", file=sys.stderr)
+
+
 def cmd_run(a: argparse.Namespace) -> int:
     root = Path(a.root)
     day, day_df, source = a.date, None, None
@@ -106,6 +118,8 @@ def cmd_run(a: argparse.Namespace) -> int:
             print(f"{day}: pending ({e})")
             return 0
     s = store(root, day_df, source)
+    if not a.file:  # --file is the offline mode
+        cache_pvpc(root, [day - dt.timedelta(days=1), day])
     outputs.build(root, chart_dates=[day])
     print(outputs.headline(s))
     _gh_append("GITHUB_STEP_SUMMARY", step_summary(s))
@@ -155,6 +169,84 @@ def cmd_backfill(a: argparse.Namespace) -> int:
     return 1 if failed else 0
 
 
+def _cell(v: float | None, spec: str) -> str:
+    return "n/a" if v is None else format(v, spec)
+
+
+def estimate_text(report: dict) -> str:
+    """Compact hourly table plus the report, for the terminal."""
+    t = report["tariff"]
+    out = [
+        f"{t} retail price ESTIMATE, {report['weekday']} {report['date']} (peninsula; day type "
+        f"{report['day_type']}, season {report['season']}; {report['n_periods']} periods of "
+        f"{report['mtu_min']} min)",
+        *report["warnings"],
+        "",
+        f"{'hour':<6}{'period':<7}{'OMIE €/MWh':>11}{'estimate €/kWh':>16}{'PVPC €/kWh*':>13}",
+    ]
+    for h in report["hourly"]:
+        out.append(
+            f"{h['hour']:<6}{h['period']:<7}{h['omie_eur_mwh']:>11.2f}"
+            f"{_cell(h['estimate_eur_kwh'], '.4f'):>16}{_cell(h['pvpc_eur_kwh'], '.4f'):>13}"
+        )
+    lo, hi = report["min_estimate"], report["max_estimate"]
+    out += [
+        f"* {report['pvpc']['note']}" + ("" if report["pvpc"]["available"] else " Not available here."),
+        "",
+        f"Estimate mean {report['mean_estimate_eur_kwh']:.4f} €/kWh; min {lo['estimate_eur_kwh']:.4f} at "
+        f"{lo['time']} ({lo['period']}); max {hi['estimate_eur_kwh']:.4f} at {hi['time']} ({hi['period']})",
+    ]
+    for minutes, c in report["cheapest_windows"].items():
+        r, w = c["retail"], c["wholesale"]
+        out += [
+            f"Cheapest {minutes} min by estimate: {r['start']}–{r['end']}  {r['estimate_eur_kwh']:.4f} €/kWh "
+            f"({'/'.join(r['periods'])}; OMIE {r['omie_eur_mwh']:.2f} €/MWh)",
+            f"Cheapest {minutes} min by OMIE: {w['start']}–{w['end']}  {w['omie_eur_mwh']:.2f} €/MWh "
+            f"({'/'.join(w['periods'])}; estimate {w['estimate_eur_kwh']:.4f} €/kWh)",
+        ]
+    out += ["", f"Takeaway: {report['takeaway']}", "", f"Formula: {report['formula']}", "Assumptions:"]
+    out += [f"  {k} = {v['value']!r} — {v['note']}" for k, v in report["assumptions"].items()]
+    out += ["Regulated energy terms (€/kWh): " + "; ".join(
+        f"{r['period']} peaje {r['peaje_eur_kwh']:.6f} + cargo {r['cargo_eur_kwh']:.6f}"
+        for r in report["energy_terms_eur_kwh"]
+    )]  # fmt: skip
+    out += ["Sources:"]
+    out += [f"  {s['boe_id']} {s['url']} — {s['table']} (verified {s['verified']})"
+            for s in report["sources"].values()]  # fmt: skip
+    out += [f"Label: {report['label']}. {report['disclaimer']}"]
+    return "\n".join(out)
+
+
+def cmd_estimate(a: argparse.Namespace) -> int:
+    root = Path(a.root)
+    periods = history.read_periods(root)
+    day_df = periods[periods["date"] == a.date.isoformat()]
+    if day_df.empty:
+        print(f"error: {a.date} is not in {history.periods_path(root)}", file=sys.stderr)
+        return 1
+    pv = None
+    if a.pvpc:
+        try:
+            pv = pvpc.load(root, a.date)
+        except Exception as e:  # noqa: BLE001 - PVPC is optional context
+            print(f"pvpc {a.date}: skipped ({type(e).__name__}: {e})", file=sys.stderr)
+    assumptions = retail.Assumptions(
+        loss_factor=a.loss,
+        adjustment_services_eur_mwh=a.adj,
+        retailer_margin_eur_mwh=a.margin,
+        iee=a.iee,
+        iva=a.iva,
+    )
+    est = retail.estimate(day_df, a.tariff, assumptions, pv, allow_other_year=a.allow_other_year)
+    print(estimate_text(retail.day_report(est, assumptions)))
+    if a.csv:
+        path = Path(a.csv)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(retail_site.estimate_csv(est), encoding="utf-8", newline="\n")
+        print(f"wrote {path}")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="negprice", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -177,6 +269,22 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--start", type=_date, required=True)
     b.add_argument("--end", type=_date, required=True)
     b.add_argument("--sleep", type=float, default=1.0, help="seconds between requests")
+    d = retail.Assumptions()
+    e = add("estimate", cmd_estimate, "toll-aware retail price ESTIMATE for a stored day (not a bill)")
+    e.add_argument("--date", type=_date, required=True)
+    e.add_argument("--tariff", choices=tf.TARIFFS, default="2.0TD")
+    e.add_argument("--margin", type=float, default=d.retailer_margin_eur_mwh, help="retailer margin, €/MWh")
+    e.add_argument("--loss", type=float, default=d.loss_factor, help="network loss factor (0.16 = 16%%)")
+    e.add_argument(
+        "--adj", type=float, default=d.adjustment_services_eur_mwh, help="adjustment services, €/MWh"
+    )
+    e.add_argument("--iee", type=float, default=d.iee, help="electricity tax rate")
+    e.add_argument("--iva", type=float, default=d.iva, help="VAT rate")
+    e.add_argument("--pvpc", action=argparse.BooleanOptionalAction, default=True,
+                   help="add PVPC as context (data/pvpc cache, else the public ESIOS archive)")  # fmt: skip
+    e.add_argument("--csv", help="also write the per-period estimate to this CSV path")
+    e.add_argument("--allow-other-year", action="store_true",
+                   help="apply the 2026 tables to a date outside 2026 (prints a warning)")  # fmt: skip
     return p
 
 
