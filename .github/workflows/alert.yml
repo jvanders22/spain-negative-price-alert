@@ -80,7 +80,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/history data/pvpc site drafts
+          git add data/history data/pvpc site  # drafts/ is gitignored: uploaded as an artifact below
           if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
           if [ "$MODE" = "pvpc" ]; then
             git commit -m "data: PVPC context for $DATE"
@@ -94,6 +94,16 @@ jobs:
           done
           echo "push failed after 5 attempts" >&2
           exit 1
+      # X drafts are never committed (drafts/ is gitignored). They are kept as a short-lived artifact for
+      # Josh to review. Note: on a public repo, artifacts can be downloaded by any signed-in GitHub user.
+      - name: Upload X draft (artifact, not committed)
+        if: steps.run.outputs.processed == 'true' && steps.run.outputs.mode != 'pvpc'
+        uses: actions/upload-artifact@v4
+        with:
+          name: x-draft-${{ steps.run.outputs.date }}
+          path: drafts/
+          if-no-files-found: ignore
+          retention-days: 14
 
   pages:
     # Disabled by default: GitHub Pages on the Free plan needs a public repo. Set repo variable

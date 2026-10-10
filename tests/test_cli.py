@@ -284,6 +284,19 @@ def test_workflow_routes_evening_crons_to_pvpc_refresh():
     for cron in ("17 19 * * *", "17 20 * * *"):
         assert f'- cron: "{cron}"' in text and f'"$SCHEDULE" = "{cron}"' in text
     assert "SCHEDULE: ${{ github.event.schedule }}" in text and "negprice pvpc-refresh" in text
-    assert "git add data/history data/pvpc site drafts" in text
+    assert "git add data/history data/pvpc site " in text and "site drafts" not in text
+    assert "name: x-draft-${{ steps.run.outputs.date }}" in text and "path: drafts/" in text
     assert 'git commit -m "data: PVPC context for $DATE"' in text
     assert 'git commit -m "data: OMIE day-ahead for $DATE"' in text
+
+
+def test_drafts_are_gitignored_and_not_in_step_summary(tmp_path, monkeypatch):
+    root = Path(__file__).parents[1]
+    assert "drafts/" in (root / ".gitignore").read_text().splitlines()
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    assert run(tmp_path, "--file", str(fixture_path("20261010"))) == 0
+    text = summary.read_text()
+    draft_text = (tmp_path / "drafts/2026-10-10.md").read_text().split("```text\n")[1].split("```")[0].strip()
+    assert draft_text.splitlines()[0] not in text
+    assert "x-draft-2026-10-10" in text

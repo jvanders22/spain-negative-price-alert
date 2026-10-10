@@ -5,3 +5,5 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 .env
+# X post drafts: written locally / uploaded as a workflow artifact, never committed
+drafts/

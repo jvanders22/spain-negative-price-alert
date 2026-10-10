@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import draft, history, omie, outputs, pvpc, retail, retail_site
+from . import history, omie, outputs, pvpc, retail, retail_site
 from . import summary as sm
 from . import tariffs as tf
 
@@ -73,7 +73,9 @@ def step_summary(s: dict) -> str:
         f"- Cheapest 3h: {c['start']}–{c['end']} at {c['mean']:.2f} €/MWh\n"
         f"- Zero-price days YTD: {s['ytd_zero_days']} (same date last year: {s['ytd_zero_days_prev_year']})\n"
         f"- Source: {s['source']['file']}\n\n"
-        f"### Draft (not posted)\n\n```text\n{draft.post_text(s)}\n```\n"
+        # The draft text itself is NOT put in the step summary (public on a public repo); it is only in
+        # drafts/<date>.md, which is gitignored and uploaded as a short-lived workflow artifact.
+        f"X draft: `drafts/{s['date']}.md` (workflow artifact `x-draft-{s['date']}`, not committed)\n"
     )
 
 
@@ -295,7 +297,7 @@ def parser() -> argparse.ArgumentParser:
 
     def add(name: str, func, help: str) -> argparse.ArgumentParser:
         sp = sub.add_parser(name, help=help)
-        sp.add_argument("--root", default=".", help="repo root holding data/, site/, drafts/ (default: cwd)")
+        sp.add_argument("--root", default=".", help="repo root with data/, site/, drafts/ (default: cwd)")
         sp.set_defaults(func=func)
         return sp
 

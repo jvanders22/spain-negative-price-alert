@@ -79,7 +79,7 @@ it.
  data/history/periods.csv + daily.csv   (upsert by delivery date, byte-stable)
         │
         ▼
- site/latest.json  site/feed.xml  site/charts/<date>.png  site/index.html   drafts/<date>.md
+ site/latest.json  site/feed.xml  site/charts/<date>.png  site/index.html   drafts/<date>.md (gitignored → artifact)
         │
         ▼
  commit by github-actions[bot] ─▶ (optional) GitHub Pages deploy of site/
@@ -136,7 +136,7 @@ don't commit). The Pages deploy job exists but is disabled unless the repo varia
 | `site/feed.xml` | RSS 2.0, newest 30 days; titles start `ALERT:` on zero-price days, else `Cheapest 3h:` |
 | `site/charts/<date>.png`, `site/charts/latest.png` | one bar per period; ≤0 and ≤10 € periods highlighted |
 | `site/index.html` | static page (no external JS/CSS/fonts): latest day, chart, 30-day strip, YTD |
-| `drafts/<date>.md` | X post draft (≤280 chars) + the facts it was built from. Not published, not under `site/` |
+| `drafts/<date>.md` | X post draft (≤280 chars) + the facts it was built from. **Gitignored, never committed**: the workflow uploads it as a 14-day artifact `x-draft-<date>` for review |
 | `site/estimate/latest.json`, `site/estimate/<date>-2.0TD.csv`, `-3.0TD.csv` | retail price **estimate** for the latest day, per period |
 | `site/wholesale-vs-bill.html` | "Wholesale is not your bill" explainer with a worked example from the latest day |
 | `data/pvpc/<date>.json` | cached raw PVPC responses (ESIOS archive 70), context column only |
@@ -207,17 +207,8 @@ First real run, for delivery day **Sat 10 Oct 2026** (OMIE file `marginalpdbc_20
 
 ![Chart for 10 Oct 2026](site/charts/2026-10-10.png)
 
-Generated X draft (`drafts/2026-10-10.md`, not posted):
-
-```text
-Sat 10 Oct: Spain's day-ahead power hits €0 or below for 18 of 96 quarter-hours, 12:30–17:00. Low: -€0.01/MWh. Evening: ~€209.
-
-Zero-price day #151 of 2026 (111 by this date in 2025).
-
-A battery doesn't need cheap power. It needs the gap between noon and 9pm.
-
-Source: OMIE
-```
+The run also writes an X post draft (≤280 characters) to `drafts/2026-10-10.md`. Drafts are not committed or
+published: `drafts/` is gitignored and the workflow keeps each one as a short-lived artifact for review.
 
 
 ## Data source and attribution
@@ -245,7 +236,8 @@ day-ahead market, Spain zone. Wholesale prices, not your retail bill."
 - On the autumn fall-back day, times in the repeated 02:00 hour are tagged `CEST`/`CET` in window strings
   and hourly labels.
 - No forecasting: it reports the published day-ahead result only.
-- Drafts are never posted; a human approves every post.
+- Drafts are never posted or committed; a human reviews them from the workflow artifact. On a public repo,
+  artifacts are downloadable by any signed-in GitHub user.
 
 ## License
 
