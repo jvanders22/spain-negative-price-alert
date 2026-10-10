@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "label": "estimate",
-  "date": "2026-10-10",
+  "date": "2026-10-11",
   "available": true,
   "disclaimer": "Estimate only, not a bill and not advice: peninsula, 2026 regulated tables, assumed losses, adjustment services and retailer margin; power term, meter rental and IEE minimums excluded.",
   "timezone": "Europe/Madrid",
@@ -11,8 +11,8 @@
       "disclaimer": "Estimate only, not a bill and not advice: peninsula, 2026 regulated tables, assumed losses, adjustment services and retailer margin; power term, meter rental and IEE minimums excluded.",
       "tariff": "2.0TD",
       "zone": "peninsula",
-      "date": "2026-10-10",
-      "weekday": "Sat",
+      "date": "2026-10-11",
+      "weekday": "Sun",
       "day_type": "D",
       "season": "baja",
       "is_tariff_holiday": false,
@@ -23,18 +23,18 @@
         "omie": "EUR/MWh",
         "pvpc": "EUR/kWh before taxes"
       },
-      "mean_estimate_eur_kwh": 0.250007,
+      "mean_estimate_eur_kwh": 0.266966,
       "min_estimate": {
-        "estimate_eur_kwh": 0.058201,
+        "estimate_eur_kwh": 0.058968,
         "time": "15:00",
         "period": "P3",
-        "omie_eur_mwh": -0.01
+        "omie_eur_mwh": 0.51
       },
       "max_estimate": {
-        "estimate_eur_kwh": 0.382294,
+        "estimate_eur_kwh": 0.414648,
         "time": "19:45",
         "period": "P3",
-        "omie_eur_mwh": 219.66
+        "omie_eur_mwh": 241.59
       },
       "cheapest_windows": {
         "60": {
@@ -42,8 +42,8 @@
           "retail": {
             "start": "15:00",
             "end": "16:00",
-            "estimate_eur_kwh": 0.058201,
-            "omie_eur_mwh": -0.01,
+            "estimate_eur_kwh": 0.058979,
+            "omie_eur_mwh": 0.52,
             "regulated_eur_kwh": 0.003292,
             "periods": [
               "P3"
@@ -52,8 +52,8 @@
           "wholesale": {
             "start": "15:00",
             "end": "16:00",
-            "estimate_eur_kwh": 0.058201,
-            "omie_eur_mwh": -0.01,
+            "estimate_eur_kwh": 0.058979,
+            "omie_eur_mwh": 0.52,
             "regulated_eur_kwh": 0.003292,
             "periods": [
               "P3"
@@ -64,20 +64,20 @@
         "180": {
           "minutes": 180,
           "retail": {
-            "start": "13:30",
-            "end": "16:30",
-            "estimate_eur_kwh": 0.058208,
-            "omie_eur_mwh": -0.01,
+            "start": "13:15",
+            "end": "16:15",
+            "estimate_eur_kwh": 0.059514,
+            "omie_eur_mwh": 0.88,
             "regulated_eur_kwh": 0.003292,
             "periods": [
               "P3"
             ]
           },
           "wholesale": {
-            "start": "13:30",
-            "end": "16:30",
-            "estimate_eur_kwh": 0.058208,
-            "omie_eur_mwh": -0.01,
+            "start": "13:15",
+            "end": "16:15",
+            "estimate_eur_kwh": 0.059514,
+            "omie_eur_mwh": 0.88,
             "regulated_eur_kwh": 0.003292,
             "periods": [
               "P3"
@@ -86,228 +86,228 @@
           "same_window": true
         }
       },
-      "takeaway": "Cheapest wholesale 3h: 13:30–16:30 (-0.01 €/MWh); cheapest estimated 2.0TD 3h: 13:30–16:30 (0.058 €/kWh): the same window, all in P3 (valle).",
+      "takeaway": "Cheapest wholesale 3h: 13:15–16:15 (0.88 €/MWh); cheapest estimated 2.0TD 3h: 13:15–16:15 (0.060 €/kWh): the same window, all in P3 (valle).",
       "pvpc": {
-        "available": true,
-        "mean_eur_kwh": 0.15527,
+        "available": false,
+        "mean_eur_kwh": null,
         "note": "PVPC = regulated 2.0TD price (ESIOS archive 70, field PCB) in €/kWh BEFORE taxes, as published; context only, not comparable 1:1 with the after-tax estimate."
       },
       "hourly": [
         {
-          "ts_utc": "2026-10-09T22:00:00Z",
+          "ts_utc": "2026-10-10T22:00:00Z",
           "hour": "00:00",
           "local_hour": 0,
           "period": "P3",
-          "omie_eur_mwh": 192.89,
-          "estimate_eur_kwh": 0.342802,
-          "pvpc_eur_kwh": 0.21824
+          "omie_eur_mwh": 200.25,
+          "estimate_eur_kwh": 0.35365,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-09T23:00:00Z",
+          "ts_utc": "2026-10-10T23:00:00Z",
           "hour": "01:00",
           "local_hour": 1,
           "period": "P3",
-          "omie_eur_mwh": 189.99,
-          "estimate_eur_kwh": 0.338523,
-          "pvpc_eur_kwh": 0.21804
+          "omie_eur_mwh": 199.86,
+          "estimate_eur_kwh": 0.353085,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T00:00:00Z",
+          "ts_utc": "2026-10-11T00:00:00Z",
           "hour": "02:00",
           "local_hour": 2,
           "period": "P3",
-          "omie_eur_mwh": 190.16,
-          "estimate_eur_kwh": 0.338778,
-          "pvpc_eur_kwh": 0.22088
+          "omie_eur_mwh": 198.74,
+          "estimate_eur_kwh": 0.351422,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T01:00:00Z",
+          "ts_utc": "2026-10-11T01:00:00Z",
           "hour": "03:00",
           "local_hour": 3,
           "period": "P3",
-          "omie_eur_mwh": 190.72,
-          "estimate_eur_kwh": 0.339589,
-          "pvpc_eur_kwh": 0.2224
+          "omie_eur_mwh": 197.83,
+          "estimate_eur_kwh": 0.350087,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T02:00:00Z",
+          "ts_utc": "2026-10-11T02:00:00Z",
           "hour": "04:00",
           "local_hour": 4,
           "period": "P3",
-          "omie_eur_mwh": 198.05,
-          "estimate_eur_kwh": 0.350411,
-          "pvpc_eur_kwh": 0.22997
+          "omie_eur_mwh": 197.69,
+          "estimate_eur_kwh": 0.349873,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T03:00:00Z",
+          "ts_utc": "2026-10-11T03:00:00Z",
           "hour": "05:00",
           "local_hour": 5,
           "period": "P3",
-          "omie_eur_mwh": 199.75,
-          "estimate_eur_kwh": 0.352927,
-          "pvpc_eur_kwh": 0.2322
+          "omie_eur_mwh": 197.22,
+          "estimate_eur_kwh": 0.349187,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T04:00:00Z",
+          "ts_utc": "2026-10-11T04:00:00Z",
           "hour": "06:00",
           "local_hour": 6,
           "period": "P3",
-          "omie_eur_mwh": 199.63,
-          "estimate_eur_kwh": 0.352746,
-          "pvpc_eur_kwh": 0.23171
+          "omie_eur_mwh": 197.55,
+          "estimate_eur_kwh": 0.349673,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T05:00:00Z",
+          "ts_utc": "2026-10-11T05:00:00Z",
           "hour": "07:00",
           "local_hour": 7,
           "period": "P3",
-          "omie_eur_mwh": 195.85,
-          "estimate_eur_kwh": 0.347165,
-          "pvpc_eur_kwh": 0.24203
+          "omie_eur_mwh": 198.57,
+          "estimate_eur_kwh": 0.351175,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T06:00:00Z",
+          "ts_utc": "2026-10-11T06:00:00Z",
           "hour": "08:00",
           "local_hour": 8,
           "period": "P3",
-          "omie_eur_mwh": 202.38,
-          "estimate_eur_kwh": 0.356799,
-          "pvpc_eur_kwh": 0.23949
+          "omie_eur_mwh": 198.78,
+          "estimate_eur_kwh": 0.351496,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T07:00:00Z",
+          "ts_utc": "2026-10-11T07:00:00Z",
           "hour": "09:00",
           "local_hour": 9,
           "period": "P3",
-          "omie_eur_mwh": 126.57,
-          "estimate_eur_kwh": 0.244949,
-          "pvpc_eur_kwh": 0.15172
+          "omie_eur_mwh": 141.93,
+          "estimate_eur_kwh": 0.267614,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T08:00:00Z",
+          "ts_utc": "2026-10-11T08:00:00Z",
           "hour": "10:00",
           "local_hour": 10,
           "period": "P3",
-          "omie_eur_mwh": 26.08,
-          "estimate_eur_kwh": 0.096697,
-          "pvpc_eur_kwh": 0.02841
+          "omie_eur_mwh": 83.94,
+          "estimate_eur_kwh": 0.182054,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T09:00:00Z",
+          "ts_utc": "2026-10-11T09:00:00Z",
           "hour": "11:00",
           "local_hour": 11,
           "period": "P3",
-          "omie_eur_mwh": 0.89,
-          "estimate_eur_kwh": 0.059521,
-          "pvpc_eur_kwh": -0.00076
+          "omie_eur_mwh": 26.66,
+          "estimate_eur_kwh": 0.097553,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T10:00:00Z",
+          "ts_utc": "2026-10-11T10:00:00Z",
           "hour": "12:00",
           "local_hour": 12,
           "period": "P3",
-          "omie_eur_mwh": 0.03,
-          "estimate_eur_kwh": 0.058256,
-          "pvpc_eur_kwh": -0.00147
+          "omie_eur_mwh": 1.2,
+          "estimate_eur_kwh": 0.059986,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T11:00:00Z",
+          "ts_utc": "2026-10-11T11:00:00Z",
           "hour": "13:00",
           "local_hour": 13,
           "period": "P3",
-          "omie_eur_mwh": 0.0,
-          "estimate_eur_kwh": 0.058216,
-          "pvpc_eur_kwh": -0.00207
+          "omie_eur_mwh": 1.07,
+          "estimate_eur_kwh": 0.059794,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T12:00:00Z",
+          "ts_utc": "2026-10-11T12:00:00Z",
           "hour": "14:00",
           "local_hour": 14,
           "period": "P3",
-          "omie_eur_mwh": 0.0,
-          "estimate_eur_kwh": 0.058216,
-          "pvpc_eur_kwh": -0.00195
+          "omie_eur_mwh": 1.07,
+          "estimate_eur_kwh": 0.059794,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T13:00:00Z",
+          "ts_utc": "2026-10-11T13:00:00Z",
           "hour": "15:00",
           "local_hour": 15,
           "period": "P3",
-          "omie_eur_mwh": -0.01,
-          "estimate_eur_kwh": 0.058201,
-          "pvpc_eur_kwh": -0.00037
+          "omie_eur_mwh": 0.52,
+          "estimate_eur_kwh": 0.058979,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T14:00:00Z",
+          "ts_utc": "2026-10-11T14:00:00Z",
           "hour": "16:00",
           "local_hour": 16,
           "period": "P3",
-          "omie_eur_mwh": -0.01,
-          "estimate_eur_kwh": 0.058208,
-          "pvpc_eur_kwh": -0.00035
+          "omie_eur_mwh": 1.16,
+          "estimate_eur_kwh": 0.059927,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T15:00:00Z",
+          "ts_utc": "2026-10-11T15:00:00Z",
           "hour": "17:00",
           "local_hour": 17,
           "period": "P3",
-          "omie_eur_mwh": 29.06,
-          "estimate_eur_kwh": 0.10109,
-          "pvpc_eur_kwh": 0.0331
+          "omie_eur_mwh": 66.55,
+          "estimate_eur_kwh": 0.156401,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T16:00:00Z",
+          "ts_utc": "2026-10-11T16:00:00Z",
           "hour": "18:00",
           "local_hour": 18,
           "period": "P3",
-          "omie_eur_mwh": 137.19,
-          "estimate_eur_kwh": 0.260613,
-          "pvpc_eur_kwh": 0.16581
+          "omie_eur_mwh": 178.46,
+          "estimate_eur_kwh": 0.321509,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T17:00:00Z",
+          "ts_utc": "2026-10-11T17:00:00Z",
           "hour": "19:00",
           "local_hour": 19,
           "period": "P3",
-          "omie_eur_mwh": 200.53,
-          "estimate_eur_kwh": 0.354074,
-          "pvpc_eur_kwh": 0.24501
+          "omie_eur_mwh": 234.79,
+          "estimate_eur_kwh": 0.404612,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T18:00:00Z",
+          "ts_utc": "2026-10-11T18:00:00Z",
           "hour": "20:00",
           "local_hour": 20,
           "period": "P3",
-          "omie_eur_mwh": 218.87,
-          "estimate_eur_kwh": 0.381121,
-          "pvpc_eur_kwh": 0.28446
+          "omie_eur_mwh": 234.0,
+          "estimate_eur_kwh": 0.403447,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T19:00:00Z",
+          "ts_utc": "2026-10-11T19:00:00Z",
           "hour": "21:00",
           "local_hour": 21,
           "period": "P3",
-          "omie_eur_mwh": 215.29,
-          "estimate_eur_kwh": 0.375854,
-          "pvpc_eur_kwh": 0.28339
+          "omie_eur_mwh": 223.38,
+          "estimate_eur_kwh": 0.387782,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T20:00:00Z",
+          "ts_utc": "2026-10-11T20:00:00Z",
           "hour": "22:00",
           "local_hour": 22,
           "period": "P3",
-          "omie_eur_mwh": 201.9,
-          "estimate_eur_kwh": 0.356088,
-          "pvpc_eur_kwh": 0.24362
+          "omie_eur_mwh": 209.49,
+          "estimate_eur_kwh": 0.367293,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T21:00:00Z",
+          "ts_utc": "2026-10-11T21:00:00Z",
           "hour": "23:00",
           "local_hour": 23,
           "period": "P3",
-          "omie_eur_mwh": 204.09,
-          "estimate_eur_kwh": 0.359319,
-          "pvpc_eur_kwh": 0.24297
+          "omie_eur_mwh": 205.09,
+          "estimate_eur_kwh": 0.360798,
+          "pvpc_eur_kwh": null
         }
       ],
       "formula": "energy = (omie + adjustment_services + capacity_payment) / 1000 × (1 + loss_factor) + retailer_margin / 1000; pre_tax = energy + peaje + cargo; iee = pre_tax × IEE; estimate = (pre_tax + iee) × (1 + IVA)",
@@ -412,8 +412,8 @@
       "disclaimer": "Estimate only, not a bill and not advice: peninsula, 2026 regulated tables, assumed losses, adjustment services and retailer margin; power term, meter rental and IEE minimums excluded.",
       "tariff": "3.0TD",
       "zone": "peninsula",
-      "date": "2026-10-10",
-      "weekday": "Sat",
+      "date": "2026-10-11",
+      "weekday": "Sun",
       "day_type": "D",
       "season": "baja",
       "is_tariff_holiday": false,
@@ -424,18 +424,18 @@
         "omie": "EUR/MWh",
         "pvpc": "EUR/kWh before taxes"
       },
-      "mean_estimate_eur_kwh": 0.249506,
+      "mean_estimate_eur_kwh": 0.266465,
       "min_estimate": {
-        "estimate_eur_kwh": 0.0577,
+        "estimate_eur_kwh": 0.058467,
         "time": "15:00",
         "period": "P6",
-        "omie_eur_mwh": -0.01
+        "omie_eur_mwh": 0.51
       },
       "max_estimate": {
-        "estimate_eur_kwh": 0.381793,
+        "estimate_eur_kwh": 0.414147,
         "time": "19:45",
         "period": "P6",
-        "omie_eur_mwh": 219.66
+        "omie_eur_mwh": 241.59
       },
       "cheapest_windows": {
         "60": {
@@ -443,8 +443,8 @@
           "retail": {
             "start": "15:00",
             "end": "16:00",
-            "estimate_eur_kwh": 0.0577,
-            "omie_eur_mwh": -0.01,
+            "estimate_eur_kwh": 0.058478,
+            "omie_eur_mwh": 0.52,
             "regulated_eur_kwh": 0.002898,
             "periods": [
               "P6"
@@ -453,8 +453,8 @@
           "wholesale": {
             "start": "15:00",
             "end": "16:00",
-            "estimate_eur_kwh": 0.0577,
-            "omie_eur_mwh": -0.01,
+            "estimate_eur_kwh": 0.058478,
+            "omie_eur_mwh": 0.52,
             "regulated_eur_kwh": 0.002898,
             "periods": [
               "P6"
@@ -465,20 +465,20 @@
         "180": {
           "minutes": 180,
           "retail": {
-            "start": "13:30",
-            "end": "16:30",
-            "estimate_eur_kwh": 0.057707,
-            "omie_eur_mwh": -0.01,
+            "start": "13:15",
+            "end": "16:15",
+            "estimate_eur_kwh": 0.059013,
+            "omie_eur_mwh": 0.88,
             "regulated_eur_kwh": 0.002898,
             "periods": [
               "P6"
             ]
           },
           "wholesale": {
-            "start": "13:30",
-            "end": "16:30",
-            "estimate_eur_kwh": 0.057707,
-            "omie_eur_mwh": -0.01,
+            "start": "13:15",
+            "end": "16:15",
+            "estimate_eur_kwh": 0.059013,
+            "omie_eur_mwh": 0.88,
             "regulated_eur_kwh": 0.002898,
             "periods": [
               "P6"
@@ -487,228 +487,228 @@
           "same_window": true
         }
       },
-      "takeaway": "Cheapest wholesale 3h: 13:30–16:30 (-0.01 €/MWh); cheapest estimated 3.0TD 3h: 13:30–16:30 (0.058 €/kWh): the same window, all in P6.",
+      "takeaway": "Cheapest wholesale 3h: 13:15–16:15 (0.88 €/MWh); cheapest estimated 3.0TD 3h: 13:15–16:15 (0.059 €/kWh): the same window, all in P6.",
       "pvpc": {
-        "available": true,
-        "mean_eur_kwh": 0.15527,
+        "available": false,
+        "mean_eur_kwh": null,
         "note": "PVPC = regulated 2.0TD price (ESIOS archive 70, field PCB) in €/kWh BEFORE taxes, as published; context only, not comparable 1:1 with the after-tax estimate."
       },
       "hourly": [
         {
-          "ts_utc": "2026-10-09T22:00:00Z",
+          "ts_utc": "2026-10-10T22:00:00Z",
           "hour": "00:00",
           "local_hour": 0,
           "period": "P6",
-          "omie_eur_mwh": 192.89,
-          "estimate_eur_kwh": 0.342301,
-          "pvpc_eur_kwh": 0.21824
+          "omie_eur_mwh": 200.25,
+          "estimate_eur_kwh": 0.353148,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-09T23:00:00Z",
+          "ts_utc": "2026-10-10T23:00:00Z",
           "hour": "01:00",
           "local_hour": 1,
           "period": "P6",
-          "omie_eur_mwh": 189.99,
-          "estimate_eur_kwh": 0.338022,
-          "pvpc_eur_kwh": 0.21804
+          "omie_eur_mwh": 199.86,
+          "estimate_eur_kwh": 0.352584,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T00:00:00Z",
+          "ts_utc": "2026-10-11T00:00:00Z",
           "hour": "02:00",
           "local_hour": 2,
           "period": "P6",
-          "omie_eur_mwh": 190.16,
-          "estimate_eur_kwh": 0.338277,
-          "pvpc_eur_kwh": 0.22088
+          "omie_eur_mwh": 198.74,
+          "estimate_eur_kwh": 0.350921,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T01:00:00Z",
+          "ts_utc": "2026-10-11T01:00:00Z",
           "hour": "03:00",
           "local_hour": 3,
           "period": "P6",
-          "omie_eur_mwh": 190.72,
-          "estimate_eur_kwh": 0.339088,
-          "pvpc_eur_kwh": 0.2224
+          "omie_eur_mwh": 197.83,
+          "estimate_eur_kwh": 0.349585,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T02:00:00Z",
+          "ts_utc": "2026-10-11T02:00:00Z",
           "hour": "04:00",
           "local_hour": 4,
           "period": "P6",
-          "omie_eur_mwh": 198.05,
-          "estimate_eur_kwh": 0.34991,
-          "pvpc_eur_kwh": 0.22997
+          "omie_eur_mwh": 197.69,
+          "estimate_eur_kwh": 0.349372,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T03:00:00Z",
+          "ts_utc": "2026-10-11T03:00:00Z",
           "hour": "05:00",
           "local_hour": 5,
           "period": "P6",
-          "omie_eur_mwh": 199.75,
-          "estimate_eur_kwh": 0.352426,
-          "pvpc_eur_kwh": 0.2322
+          "omie_eur_mwh": 197.22,
+          "estimate_eur_kwh": 0.348685,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T04:00:00Z",
+          "ts_utc": "2026-10-11T04:00:00Z",
           "hour": "06:00",
           "local_hour": 6,
           "period": "P6",
-          "omie_eur_mwh": 199.63,
-          "estimate_eur_kwh": 0.352245,
-          "pvpc_eur_kwh": 0.23171
+          "omie_eur_mwh": 197.55,
+          "estimate_eur_kwh": 0.349172,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T05:00:00Z",
+          "ts_utc": "2026-10-11T05:00:00Z",
           "hour": "07:00",
           "local_hour": 7,
           "period": "P6",
-          "omie_eur_mwh": 195.85,
-          "estimate_eur_kwh": 0.346664,
-          "pvpc_eur_kwh": 0.24203
+          "omie_eur_mwh": 198.57,
+          "estimate_eur_kwh": 0.350674,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T06:00:00Z",
+          "ts_utc": "2026-10-11T06:00:00Z",
           "hour": "08:00",
           "local_hour": 8,
           "period": "P6",
-          "omie_eur_mwh": 202.38,
-          "estimate_eur_kwh": 0.356298,
-          "pvpc_eur_kwh": 0.23949
+          "omie_eur_mwh": 198.78,
+          "estimate_eur_kwh": 0.350994,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T07:00:00Z",
+          "ts_utc": "2026-10-11T07:00:00Z",
           "hour": "09:00",
           "local_hour": 9,
           "period": "P6",
-          "omie_eur_mwh": 126.57,
-          "estimate_eur_kwh": 0.244447,
-          "pvpc_eur_kwh": 0.15172
+          "omie_eur_mwh": 141.93,
+          "estimate_eur_kwh": 0.267113,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T08:00:00Z",
+          "ts_utc": "2026-10-11T08:00:00Z",
           "hour": "10:00",
           "local_hour": 10,
           "period": "P6",
-          "omie_eur_mwh": 26.08,
-          "estimate_eur_kwh": 0.096196,
-          "pvpc_eur_kwh": 0.02841
+          "omie_eur_mwh": 83.94,
+          "estimate_eur_kwh": 0.181553,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T09:00:00Z",
+          "ts_utc": "2026-10-11T09:00:00Z",
           "hour": "11:00",
           "local_hour": 11,
           "period": "P6",
-          "omie_eur_mwh": 0.89,
-          "estimate_eur_kwh": 0.05902,
-          "pvpc_eur_kwh": -0.00076
+          "omie_eur_mwh": 26.66,
+          "estimate_eur_kwh": 0.097051,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T10:00:00Z",
+          "ts_utc": "2026-10-11T10:00:00Z",
           "hour": "12:00",
           "local_hour": 12,
           "period": "P6",
-          "omie_eur_mwh": 0.03,
-          "estimate_eur_kwh": 0.057755,
-          "pvpc_eur_kwh": -0.00147
+          "omie_eur_mwh": 1.2,
+          "estimate_eur_kwh": 0.059485,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T11:00:00Z",
+          "ts_utc": "2026-10-11T11:00:00Z",
           "hour": "13:00",
           "local_hour": 13,
           "period": "P6",
-          "omie_eur_mwh": 0.0,
-          "estimate_eur_kwh": 0.057715,
-          "pvpc_eur_kwh": -0.00207
+          "omie_eur_mwh": 1.07,
+          "estimate_eur_kwh": 0.059293,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T12:00:00Z",
+          "ts_utc": "2026-10-11T12:00:00Z",
           "hour": "14:00",
           "local_hour": 14,
           "period": "P6",
-          "omie_eur_mwh": 0.0,
-          "estimate_eur_kwh": 0.057715,
-          "pvpc_eur_kwh": -0.00195
+          "omie_eur_mwh": 1.07,
+          "estimate_eur_kwh": 0.059293,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T13:00:00Z",
+          "ts_utc": "2026-10-11T13:00:00Z",
           "hour": "15:00",
           "local_hour": 15,
           "period": "P6",
-          "omie_eur_mwh": -0.01,
-          "estimate_eur_kwh": 0.0577,
-          "pvpc_eur_kwh": -0.00037
+          "omie_eur_mwh": 0.52,
+          "estimate_eur_kwh": 0.058478,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T14:00:00Z",
+          "ts_utc": "2026-10-11T14:00:00Z",
           "hour": "16:00",
           "local_hour": 16,
           "period": "P6",
-          "omie_eur_mwh": -0.01,
-          "estimate_eur_kwh": 0.057707,
-          "pvpc_eur_kwh": -0.00035
+          "omie_eur_mwh": 1.16,
+          "estimate_eur_kwh": 0.059426,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T15:00:00Z",
+          "ts_utc": "2026-10-11T15:00:00Z",
           "hour": "17:00",
           "local_hour": 17,
           "period": "P6",
-          "omie_eur_mwh": 29.06,
-          "estimate_eur_kwh": 0.100589,
-          "pvpc_eur_kwh": 0.0331
+          "omie_eur_mwh": 66.55,
+          "estimate_eur_kwh": 0.1559,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T16:00:00Z",
+          "ts_utc": "2026-10-11T16:00:00Z",
           "hour": "18:00",
           "local_hour": 18,
           "period": "P6",
-          "omie_eur_mwh": 137.19,
-          "estimate_eur_kwh": 0.260112,
-          "pvpc_eur_kwh": 0.16581
+          "omie_eur_mwh": 178.46,
+          "estimate_eur_kwh": 0.321008,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T17:00:00Z",
+          "ts_utc": "2026-10-11T17:00:00Z",
           "hour": "19:00",
           "local_hour": 19,
           "period": "P6",
-          "omie_eur_mwh": 200.53,
-          "estimate_eur_kwh": 0.353573,
-          "pvpc_eur_kwh": 0.24501
+          "omie_eur_mwh": 234.79,
+          "estimate_eur_kwh": 0.404111,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T18:00:00Z",
+          "ts_utc": "2026-10-11T18:00:00Z",
           "hour": "20:00",
           "local_hour": 20,
           "period": "P6",
-          "omie_eur_mwh": 218.87,
-          "estimate_eur_kwh": 0.38062,
-          "pvpc_eur_kwh": 0.28446
+          "omie_eur_mwh": 234.0,
+          "estimate_eur_kwh": 0.402946,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T19:00:00Z",
+          "ts_utc": "2026-10-11T19:00:00Z",
           "hour": "21:00",
           "local_hour": 21,
           "period": "P6",
-          "omie_eur_mwh": 215.29,
-          "estimate_eur_kwh": 0.375353,
-          "pvpc_eur_kwh": 0.28339
+          "omie_eur_mwh": 223.38,
+          "estimate_eur_kwh": 0.387281,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T20:00:00Z",
+          "ts_utc": "2026-10-11T20:00:00Z",
           "hour": "22:00",
           "local_hour": 22,
           "period": "P6",
-          "omie_eur_mwh": 201.9,
-          "estimate_eur_kwh": 0.355586,
-          "pvpc_eur_kwh": 0.24362
+          "omie_eur_mwh": 209.49,
+          "estimate_eur_kwh": 0.366792,
+          "pvpc_eur_kwh": null
         },
         {
-          "ts_utc": "2026-10-10T21:00:00Z",
+          "ts_utc": "2026-10-11T21:00:00Z",
           "hour": "23:00",
           "local_hour": 23,
           "period": "P6",
-          "omie_eur_mwh": 204.09,
-          "estimate_eur_kwh": 0.358818,
-          "pvpc_eur_kwh": 0.24297
+          "omie_eur_mwh": 205.09,
+          "estimate_eur_kwh": 0.360297,
+          "pvpc_eur_kwh": null
         }
       ],
       "formula": "energy = (omie + adjustment_services + capacity_payment) / 1000 × (1 + loss_factor) + retailer_margin / 1000; pre_tax = energy + peaje + cargo; iee = pre_tax × IEE; estimate = (pre_tax + iee) × (1 + IVA)",
