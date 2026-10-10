@@ -154,7 +154,7 @@ def render(f: dict) -> str:
         "hand-computed tariff arithmetic, and a cross-check of my tolls against the values ESIOS publishes. "
         "ruff for lint and format. GitHub Actions runs CI and the daily schedule.",
         "**What I'd do next.** A D+2 forecast of zero-price hours, with a backtest against this history. A "
-        "weekly summary. A concierge test with solar installers and asesores energéticos, to see whether "
+        "concierge test with solar installers and asesores energéticos, to see whether "
         "anyone would use it.",
     ]
     out = []

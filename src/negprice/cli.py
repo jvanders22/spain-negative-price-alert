@@ -1,4 +1,5 @@
-"""``negprice`` command line: run (daily), pvpc-refresh (evening), rebuild, seed, backfill, estimate."""
+"""``negprice`` command line: run (daily), pvpc-refresh (evening), weekly (Sunday), rebuild, seed, backfill,
+estimate."""
 
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import history, omie, outputs, pvpc, retail, retail_site
+from . import history, omie, outputs, pvpc, retail, retail_site, weekly, weekly_draft, weekly_site
 from . import summary as sm
 from . import tariffs as tf
 
@@ -291,6 +292,51 @@ def cmd_estimate(a: argparse.Namespace) -> int:
     return 0
 
 
+def weekly_step_summary(f: dict) -> str:
+    """Numbers only. The draft text is NOT put in the step summary (public on a public repo)."""
+    end = f["week"]["end"]
+    bullets = "\n".join(f"- {line}" for line in weekly_draft.fact_lines(f)[1:])
+    return (
+        f"## Weekly summary, {f['week']['label']} (week ending {end})\n\n{bullets}\n"
+        f"- Chart: `site/weekly/{end}.png`, data: `site/weekly/{end}.json`\n\n"
+        f"X drafts: `drafts/weekly-{end}-en.md`, `drafts/weekly-{end}-es.md` "
+        f"(workflow artifact `x-draft-weekly-{end}`, not committed)\n"
+    )
+
+
+def cmd_weekly(a: argparse.Namespace) -> int:
+    """Sunday job: summary of the latest complete Mon–Sun week in history. No network."""
+    root = Path(a.root)
+    stored = {dt.date.fromisoformat(d) for d in history.read_daily(root)["date"]}
+    sunday = a.week_ending
+    if sunday:
+        weekly.check_sunday(sunday)
+        if not weekly.is_complete(stored, sunday):
+            missing = [str(d) for d in weekly.week_dates(sunday) if d not in stored]
+            print(f"error: week ending {sunday} is incomplete; not in history: {', '.join(missing)}",
+                  file=sys.stderr)  # fmt: skip
+            return 1
+    else:
+        sunday = weekly.latest_complete_sunday(stored, now_madrid().date())
+        if sunday is None:
+            print("error: no complete Monday–Sunday week in history", file=sys.stderr)
+            return 1
+    f, changed = weekly_site.write(root, sunday)
+    changed = outputs.build_index(root) or changed
+    print(f"week ending {sunday}: {'built' if changed else 'already built'}")
+    for line in weekly_draft.fact_lines(f):
+        print(f"  {line}")
+    folder = weekly_site.weekly_dir(root)
+    print(f"json: {folder / f'{sunday}.json'}\npng: {folder / f'{sunday}.png'}")
+    print("drafts (not committed): " + ", ".join(
+        str(weekly_site.draft_path(root, sunday, lang)) for lang in weekly_draft.LANGS
+    ))  # fmt: skip
+    if changed:
+        _gh_append("GITHUB_STEP_SUMMARY", weekly_step_summary(f))
+    _gh_output(changed, sunday)
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="negprice", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -307,6 +353,8 @@ def parser() -> argparse.ArgumentParser:
     r.add_argument("--file", help="read a local marginalpdbc file instead of fetching")
     r.add_argument("--deadline", type=_hhmm, help="Madrid HH:MM after which 'not published' is an error")
     add("pvpc-refresh", cmd_pvpc_refresh, "cache PVPC for the latest stored day (and the day before)")
+    w = add("weekly", cmd_weekly, "weekly summary of the latest complete Mon-Sun week (no network)")
+    w.add_argument("--week-ending", type=_date, help="Sunday YYYY-MM-DD (default: latest complete week)")
     add("rebuild", cmd_rebuild, "regenerate daily.csv and outputs from periods.csv (no network)")
     s = add("seed", cmd_seed, "load hourly history before 2025-10-01 from hourly.parquet")
     s.add_argument("--parquet", required=True)

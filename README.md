@@ -53,9 +53,8 @@ and git diffs show only real changes. Every assumption has a note and every regu
 tariff arithmetic, and a cross-check of my tolls against the values ESIOS publishes. ruff for lint and
 format. GitHub Actions runs CI and the daily schedule.
 
-**What I'd do next.** A D+2 forecast of zero-price hours, with a backtest against this history. A weekly
-summary. A concierge test with solar installers and asesores energéticos, to see whether anyone would use
-it.
+**What I'd do next.** A D+2 forecast of zero-price hours, with a backtest against this history. A concierge
+test with solar installers and asesores energéticos, to see whether anyone would use it.
 <!-- case-study:end -->
 
 ## How it works
@@ -89,6 +88,7 @@ Code: `src/negprice/` — `omie.py`/`http.py` (vendored fetch + parse), `summary
 and validation), `history.py` (CSV store), `outputs.py` (JSON/RSS/PNG/HTML/draft files), `draft.py`
 (post text), `cli.py`. Retail estimate: `tariffs.py` (official 2026 tables and period calendars),
 `retail.py` (formula, cheapest windows), `pvpc.py` (PVPC context), `retail_site.py` (site files).
+Weekly summary: `weekly.py` (pure facts), `weekly_draft.py` (EN/ES post text), `weekly_site.py` (files).
 
 ## Definitions
 
@@ -122,9 +122,44 @@ PVPC for the delivery day is only published around 20:15 Madrid, so two more cro
 latest stored day and the day before; if anything new was cached it rebuilds the outputs and the job
 commits "data: PVPC context for <date>". It never fails on PVPC or network errors.
 
-Manual runs: Actions → daily-alert → Run workflow, with optional `date`, `force`, and `dry_run` (run but
+Manual runs: Actions → daily-alert → Run workflow, with optional `mode` (`daily`, the default, or
+`weekly`), `date` (delivery date, or the week-ending Sunday in weekly mode), `force`, and `dry_run` (run but
 don't commit). The Pages deploy job exists but is disabled unless the repo variable `PAGES_ENABLED` is
 `true` (Pages on the Free plan needs a public repo).
+
+## Weekly summary
+
+`negprice weekly` summarises one Monday–Sunday week of delivery dates (Europe/Madrid) from
+`data/history/`, with no network. By default it takes the most recent complete week whose Sunday is today
+or earlier and has all seven days in history; `--week-ending YYYY-MM-DD` picks a week and must be a
+Sunday. Five numbers:
+
+1. Periods at or below €0 (and how many strictly negative), and on how many of the 7 days.
+2. The lowest price of the week, with day and local time (earliest period on ties).
+3. Midday vs evening: mean of all the week's periods starting 10:00–17:59 and 19:00–22:59; spread =
+   evening − midday.
+4. The cheapest **estimated** 2.0TD 3-hour window of the week (default assumptions of the retail
+   estimate, see below), next to the cheapest wholesale 3-hour window. Windows are searched within each
+   delivery day, so none spans midnight; the week's figure is the lowest of the seven.
+5. Zero-price days year to date as of that Sunday, against the same date last year.
+
+It also gives the week-over-week change of 1 and 3 when the previous week is complete in history.
+
+**When.** Sundays at about 10:17 Madrid: crons `17 8 * * 0` and `17 9 * * 0` UTC cover CEST and CET, and
+the workflow routes exactly those two to `negprice weekly`. The week is already complete by then, because
+Sunday's prices are published on Saturday. The second fire of the day finds
+`site/weekly/<sunday>.json` identical, prints "already built" and commits nothing. A new week is committed
+as "data: weekly summary week ending <date>" and deployed by the same Pages job.
+
+**Where.** `site/weekly/<sunday>.json` (`schema_version` 1: the numbers, the week's dates, the OMIE files
+and tariff sources, and `"label": "estimate"` on the 2.0TD figure) and `site/weekly/<sunday>.png`, one
+1080×1080 chart with the week's prices at native resolution and the five numbers. `latest.json` and
+`latest.png` are copies of the newest week, and `site/index.html` links them under "This week".
+
+**Drafts.** `drafts/weekly-<sunday>-en.md` and `drafts/weekly-<sunday>-es.md` hold an X post draft each
+(≤280 characters, English and Spanish) plus the facts they were built from. Like the daily drafts they are
+gitignored and never committed or posted: the workflow uploads them as a 14-day artifact
+`x-draft-weekly-<sunday>`, and the public step summary lists the numbers only, not the draft text.
 
 ## Outputs
 
@@ -137,6 +172,8 @@ don't commit). The Pages deploy job exists but is disabled unless the repo varia
 | `site/charts/<date>.png`, `site/charts/latest.png` | one bar per period; ≤0 and ≤10 € periods highlighted |
 | `site/index.html` | static page (no external JS/CSS/fonts): latest day, chart, 30-day strip, YTD |
 | `drafts/<date>.md` | X post draft (≤280 chars) + the facts it was built from. **Gitignored, never committed**: the workflow uploads it as a 14-day artifact `x-draft-<date>` for review |
+| `site/weekly/<sunday>.json`, `site/weekly/<sunday>.png`, `site/weekly/latest.json`, `site/weekly/latest.png` | weekly summary (Mon–Sun) and its 1080×1080 chart; see [Weekly summary](#weekly-summary) |
+| `drafts/weekly-<sunday>-en.md`, `drafts/weekly-<sunday>-es.md` | weekly X post drafts. **Gitignored, never committed**: artifact `x-draft-weekly-<sunday>` |
 | `site/estimate/latest.json`, `site/estimate/<date>-2.0TD.csv`, `-3.0TD.csv` | retail price **estimate** for the latest day, per period |
 | `site/wholesale-vs-bill.html` | "Wholesale is not your bill" explainer with a worked example from the latest day |
 | `data/pvpc/<date>.json` | cached raw PVPC responses (ESIOS archive 70), context column only |
@@ -184,6 +221,8 @@ negprice run --file tests/fixtures/marginalpdbc_20261010.1   # offline, from a l
 negprice rebuild                               # daily.csv + site/ + latest draft from periods.csv, no network
 negprice pvpc-refresh                          # cache PVPC for the latest day (+ day before), rebuild if new
 negprice estimate --date 2026-10-10            # retail price estimate for a stored day (see above)
+negprice weekly                                # latest complete Mon–Sun week: site/weekly/ + drafts
+negprice weekly --week-ending 2026-10-04       # a given week (must be a Sunday)
 
 ruff check . && ruff format --check . && pytest -q   # tests use fixtures only, no network
 python scripts/build_case_study.py --check     # the "Case study" numbers above match data/history

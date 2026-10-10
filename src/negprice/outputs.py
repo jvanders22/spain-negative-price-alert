@@ -2,6 +2,7 @@
 
 site/latest.json, site/feed.xml, site/charts/<date>.png + latest.png, site/index.html, drafts/<date>.md,
 plus the retail-estimate files written by ``retail_site`` (site/estimate/*, site/wholesale-vs-bill.html).
+The weekly files (site/weekly/*) are written by ``weekly_site``; index.html only links the latest one.
 Nothing reads the wall clock, so rebuilding from the same history is byte-identical.
 """
 
@@ -157,7 +158,35 @@ def _strip_color(n_le0: int) -> str:
     return STRIP_COLORS[0 if n_le0 == 0 else min(4, 1 + n_le0 // 12)]
 
 
-def index_html(s: dict, recent: list[dict], estimate_section: str = "") -> str:
+def weekly_section(root: Path) -> str:
+    """ "This week" block for index.html, from site/weekly/latest.json ("" until a week has been built)."""
+    path = Path(root) / "site" / "weekly" / "latest.json"
+    if not path.exists():
+        return ""
+    w = json.loads(path.read_text(encoding="utf-8"))
+    e = html.escape
+    z, lo, s, r = w["zero_or_below"], w["lowest"], w["midday_evening"], w["cheapest_3h"]["retail"]
+    y, end = w["zero_days_ytd"], e(w["week"]["end"])
+    estimate = (
+        f" Cheapest estimated {e(r['tariff'])} 3 hours: {e(r['weekday'])} {e(r['start'])}–{e(r['end'])} at "
+        f"{r['estimate_eur_kwh']:.3f} €/kWh (an <strong>estimate</strong>, not a bill)."
+        if r["available"]
+        else ""
+    )
+    return f"""<h2>This week</h2>
+<p>Week of {e(w["week"]["label"])}: {z["n_le0"]} of {z["n_periods"]} periods at or below €0
+({z["n_neg"]} negative) on {z["days_with_le0"]} of {z["days"]} days. Lowest price {lo["price"]:.2f} €/MWh
+({e(lo["weekday"])} {e(lo["time"])}). Midday {s["midday_mean"]:.2f} vs evening {s["evening_mean"]:.2f} €/MWh
+(spread {s["spread"]:.2f}).{estimate} Zero-price days in {y["year"]} as of {e(y["as_of"])}:
+{y["ytd_zero_days"]} (same date last year: {y["ytd_zero_days_prev_year"]}).</p>
+<a href="weekly/{end}.png"><img src="weekly/latest.png" width="540"
+  alt="Weekly summary chart for the week of {e(w["week"]["label"])}"></a>
+<p class="note">Wholesale day-ahead prices, Monday to Sunday (Europe/Madrid). Data:
+<a href="weekly/latest.json">weekly/latest.json</a> (also <a href="weekly/{end}.json">{end}.json</a>,
+<a href="weekly/{end}.png">{end}.png</a>).</p>"""
+
+
+def index_html(s: dict, recent: list[dict], estimate_section: str = "", weekly_section: str = "") -> str:
     e = html.escape
     c = s["cheapest_3h"]
     rows = [
@@ -181,6 +210,11 @@ def index_html(s: dict, recent: list[dict], estimate_section: str = "") -> str:
         for r in recent
     )
     status = "Zero-price day" if s["is_alert"] else "No zero-price periods"
+    weekly_item = (
+        '<li><a href="weekly/latest.json">weekly/latest.json</a> — latest Monday–Sunday summary</li>\n'
+        if weekly_section
+        else ""
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -214,6 +248,7 @@ footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 <table>
 {table}
 </table>
+{weekly_section}
 {estimate_section}
 <h2>Last {len(recent)} days</h2>
 <p>Each cell is a delivery day, shaded by the number of periods at or below €0 (grey = none).</p>
@@ -225,7 +260,7 @@ footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 <li><a href="latest.json">latest.json</a> — latest day summary (schema_version {SCHEMA_VERSION})</li>
 <li><a href="feed.xml">feed.xml</a> — RSS, one item per day</li>
 <li><a href="estimate/latest.json">estimate/latest.json</a> — retail price estimate for the latest day</li>
-<li>Full history (CSV): <a href="{REPO_URL}/tree/main/data/history">data/history</a></li>
+{weekly_item}<li>Full history (CSV): <a href="{REPO_URL}/tree/main/data/history">data/history</a></li>
 </ul>
 <footer>{e(ATTRIBUTION)} Source file: {e(s["source"]["file"])}. <a href="{REPO_URL}">Code</a>.</footer>
 </body>
@@ -263,6 +298,27 @@ def complete(root: Path, day: dt.date) -> bool:
     return all(p.exists() for p in need)
 
 
+def _write_index(root: Path, latest: dict, recent: list[dict], est: dict | None) -> None:
+    page = index_html(latest, recent, retail_site.index_section(est), weekly_section(root))
+    _write_text(Path(root) / "site" / "index.html", page)
+
+
+def build_index(root: Path) -> bool:
+    """Rewrite only site/index.html (after the weekly files changed). Returns True if its bytes changed."""
+    root = Path(root)
+    daily = history.read_daily(root)
+    if daily.empty:
+        return False
+    dates = sorted(dt.date.fromisoformat(d) for d in daily["date"])
+    recent = summaries(root, dates[-FEED_DAYS:])
+    periods = history.read_periods(root)
+    est = retail_site.bundle(root, dates[-1], periods[periods["date"] == dates[-1].isoformat()])
+    path = root / "site" / "index.html"
+    before = path.read_bytes() if path.exists() else None
+    _write_index(root, recent[-1], recent, est)
+    return path.read_bytes() != before
+
+
 def build(root: Path, chart_dates: list[dt.date] = ()) -> dict | None:
     """Regenerate site/ from history. Charts and drafts are written for the latest day and ``chart_dates``.
     Returns the latest summary (None if history is empty)."""
@@ -278,7 +334,7 @@ def build(root: Path, chart_dates: list[dt.date] = ()) -> dict | None:
     _write_text(site / "feed.xml", feed_xml(recent))
     periods = history.read_periods(root)
     est = retail_site.write(root, dates[-1], periods[periods["date"] == dates[-1].isoformat()])
-    _write_text(site / "index.html", index_html(latest, recent, retail_site.index_section(est)))
+    _write_index(root, latest, recent, est)
     for day in sorted({*chart_dates, dates[-1]}):
         s = latest if day == dates[-1] else summaries(root, [day])[0]
         paths = [site / "charts" / f"{day}.png"] + (

@@ -290,6 +290,22 @@ def test_workflow_routes_evening_crons_to_pvpc_refresh():
     assert 'git commit -m "data: OMIE day-ahead for $DATE"' in text
 
 
+def test_workflow_routes_sunday_crons_and_manual_mode_to_weekly():
+    text = (Path(__file__).parents[1] / ".github/workflows/alert.yml").read_text()
+    for cron in ("17 8 * * 0", "17 9 * * 0"):  # 10:17 Madrid in CEST / CET
+        assert f'- cron: "{cron}"' in text and f'"$SCHEDULE" = "{cron}"' in text
+    assert "options: [daily, weekly]" in text and "default: daily" in text
+    assert "RUN_MODE: ${{ inputs.mode }}" in text and '[ "$RUN_MODE" = "weekly" ]' in text
+    weekly = text.split('echo "mode=weekly" >> "$GITHUB_OUTPUT"')[1].split("exit 0")[0]
+    assert "args=(weekly)" in weekly and '--week-ending "$DATE"' in weekly and "negprice" in weekly
+    # the evening and afternoon routes are unchanged and come first / last
+    assert text.index("negprice pvpc-refresh") < text.index("args=(weekly)") < text.index("args=(run ")
+    assert 'git commit -m "data: weekly summary week ending $DATE"' in text
+    assert "name: x-draft-weekly-${{ steps.run.outputs.date }}" in text
+    assert text.count("retention-days: 14") == 2 and text.count("path: drafts/") == 2
+    assert "steps.run.outputs.mode == 'weekly'" in text and "steps.run.outputs.mode != 'weekly'" in text
+
+
 def test_drafts_are_gitignored_and_not_in_step_summary(tmp_path, monkeypatch):
     root = Path(__file__).parents[1]
     assert "drafts/" in (root / ".gitignore").read_text().splitlines()

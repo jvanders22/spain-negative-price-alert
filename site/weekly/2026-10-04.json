@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "kind": "weekly",
+  "units": "EUR/MWh",
+  "timezone": "Europe/Madrid",
+  "attribution": "Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.",
+  "week": {
+    "start": "2026-09-28",
+    "end": "2026-10-04",
+    "label": "Mon 28 Sep – Sun 4 Oct",
+    "dates": [
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-01",
+      "2026-10-02",
+      "2026-10-03",
+      "2026-10-04"
+    ],
+    "n_periods": 672,
+    "mtu_min": 15
+  },
+  "zero_or_below": {
+    "n_le0": 0,
+    "n_neg": 0,
+    "n_periods": 672,
+    "days_with_le0": 0,
+    "days": 7,
+    "by_day": [
+      {
+        "date": "2026-09-28",
+        "weekday": "Mon",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-09-29",
+        "weekday": "Tue",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-09-30",
+        "weekday": "Wed",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-10-01",
+        "weekday": "Thu",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-10-02",
+        "weekday": "Fri",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-10-03",
+        "weekday": "Sat",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      },
+      {
+        "date": "2026-10-04",
+        "weekday": "Sun",
+        "n_periods": 96,
+        "n_le0": 0,
+        "n_neg": 0
+      }
+    ]
+  },
+  "lowest": {
+    "price": 1.08,
+    "date": "2026-09-29",
+    "weekday": "Tue",
+    "time": "14:00",
+    "n_periods_at_min": 6
+  },
+  "midday_evening": {
+    "midday_mean": 107.55,
+    "evening_mean": 222.98,
+    "spread": 115.43,
+    "definition": "Mean price of all periods of the week starting 10:00–17:59 (midday) and 19:00–22:59 (evening), Europe/Madrid; spread = evening − midday."
+  },
+  "cheapest_3h": {
+    "minutes": 180,
+    "note": "Cheapest contiguous 180-minute windows are searched within each delivery day (no window spans midnight); the week's figure is the lowest of the seven daily windows, earliest day on ties.",
+    "retail": {
+      "label": "estimate",
+      "tariff": "2.0TD",
+      "available": true,
+      "date": "2026-09-29",
+      "weekday": "Tue",
+      "start": "14:00",
+      "end": "17:00",
+      "estimate_eur_kwh": 0.094533,
+      "omie_eur_mwh": 2.09,
+      "periods": [
+        "P2"
+      ],
+      "period_names": [
+        "P2 (llano)"
+      ],
+      "units": "EUR/kWh, taxes included",
+      "disclaimer": "Estimate only, not a bill and not advice: peninsula, 2026 regulated tables, assumed losses, adjustment services and retailer margin; power term, meter rental and IEE minimums excluded.",
+      "assumptions": {
+        "loss_factor": 0.16,
+        "adjustment_services_eur_mwh": 28.0,
+        "retailer_margin_eur_mwh": 10.0,
+        "iee": 0.0511269632,
+        "iva": 0.21
+      }
+    },
+    "wholesale": {
+      "date": "2026-09-29",
+      "weekday": "Tue",
+      "start": "13:00",
+      "end": "16:00",
+      "omie_eur_mwh": 1.24
+    }
+  },
+  "zero_days_ytd": {
+    "as_of": "2026-10-04",
+    "year": 2026,
+    "ytd_zero_days": 148,
+    "prev_year": 2025,
+    "prev_year_as_of": "2025-10-04",
+    "ytd_zero_days_prev_year": 110
+  },
+  "week_over_week": {
+    "previous_week_ending": "2026-09-27",
+    "n_le0_prev": 20,
+    "n_le0_change": -20,
+    "n_neg_prev": 14,
+    "n_neg_change": -14,
+    "days_with_le0_prev": 1,
+    "days_with_le0_change": -1,
+    "spread_prev": 191.87,
+    "spread_change": -76.44
+  },
+  "sources": {
+    "omie": [
+      {
+        "date": "2026-09-28",
+        "file": "marginalpdbc_20260928.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20260928.1"
+      },
+      {
+        "date": "2026-09-29",
+        "file": "marginalpdbc_20260929.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20260929.1"
+      },
+      {
+        "date": "2026-09-30",
+        "file": "marginalpdbc_20260930.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20260930.1"
+      },
+      {
+        "date": "2026-10-01",
+        "file": "marginalpdbc_20261001.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261001.1"
+      },
+      {
+        "date": "2026-10-02",
+        "file": "marginalpdbc_20261002.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261002.1"
+      },
+      {
+        "date": "2026-10-03",
+        "file": "marginalpdbc_20261003.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261003.1"
+      },
+      {
+        "date": "2026-10-04",
+        "file": "marginalpdbc_20261004.1",
+        "version": 1,
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261004.1"
+      }
+    ],
+    "tariffs": {
+      "peajes": {
+        "title": "CNMC, Resolución de 18 de diciembre de 2025: peajes de transporte y distribución 2026",
+        "boe_id": "BOE-A-2025-26348",
+        "boe": "BOE núm. 306, 22 dic 2025",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26348",
+        "table": "Término de energía del peaje de transporte y distribución (€/kWh)",
+        "verified": "2026-10-10"
+      },
+      "cargos": {
+        "title": "Orden TED/1524/2025, de 23 de diciembre: cargos del sistema eléctrico 2026",
+        "boe_id": "BOE-A-2025-26705",
+        "boe": "BOE núm. 312, 27 dic 2025",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26705",
+        "table": "Término de energía de los cargos (euros/kWh)",
+        "verified": "2026-10-10"
+      },
+      "capacity": {
+        "title": "Orden TED/1524/2025, de 23 de diciembre: pagos por capacidad 2026",
+        "boe_id": "BOE-A-2025-26705",
+        "boe": "BOE núm. 312, 27 dic 2025",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26705",
+        "table": "Término de energía de los pagos por capacidad (euros/kWh), en b.c.",
+        "verified": "2026-10-10"
+      },
+      "calendar": {
+        "title": "CNMC, Circular 3/2020, art. 7: periodos horarios de los peajes",
+        "boe_id": "BOE-A-2020-1066",
+        "boe": "BOE-A-2020-1066",
+        "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2020-1066",
+        "table": "Artículo 7. Periodos horarios (península)",
+        "verified": "2026-10-10"
+      }
+    }
+  },
+  "chart": "weekly/2026-10-04.png"
+}

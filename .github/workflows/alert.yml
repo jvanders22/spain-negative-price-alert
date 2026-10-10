@@ -22,10 +22,25 @@ on:
     # `negprice pvpc-refresh` instead of `run` for exactly these two cron strings; keep them in sync.
     - cron: "17 19 * * *" # 21:17 CEST | 20:17 CET
     - cron: "17 20 * * *" # 21:17 CET | 22:17 CEST
+    # Sunday weekly summary, target 10:17 Madrid (the week Mon-Sun is complete: Sunday's prices were
+    # published on Saturday):
+    #   CEST (UTC+2, summer): 08:17 UTC
+    #   CET  (UTC+1, winter): 09:17 UTC
+    # Each also fires an hour off in the other season (09:17 CET / 11:17 CEST). The duplicate is harmless:
+    # `negprice weekly` is idempotent and exits "already built" when site/weekly/<sunday>.json exists and
+    # is identical. The "Fetch, validate, publish" step runs `negprice weekly` for exactly these two cron
+    # strings; keep them in sync.
+    - cron: "17 8 * * 0" # Sun 10:17 CEST | 09:17 CET
+    - cron: "17 9 * * 0" # Sun 10:17 CET | 11:17 CEST
   workflow_dispatch:
     inputs:
+      mode:
+        description: "daily = process a delivery day; weekly = build the weekly summary"
+        type: choice
+        options: [daily, weekly]
+        default: daily
       date:
-        description: "Delivery date YYYY-MM-DD (default: tomorrow, Europe/Madrid)"
+        description: "daily: delivery date YYYY-MM-DD (default: tomorrow, Europe/Madrid); weekly: week-ending Sunday (default: latest complete week)"
         required: false
         default: ""
       force:
@@ -62,10 +77,18 @@ jobs:
           DATE: ${{ inputs.date }}
           FORCE: ${{ inputs.force }}
           SCHEDULE: ${{ github.event.schedule }}
+          RUN_MODE: ${{ inputs.mode }}
         run: |
           if [ "$SCHEDULE" = "17 19 * * *" ] || [ "$SCHEDULE" = "17 20 * * *" ]; then
             echo "mode=pvpc" >> "$GITHUB_OUTPUT"
             negprice pvpc-refresh
+            exit 0
+          fi
+          if [ "$SCHEDULE" = "17 8 * * 0" ] || [ "$SCHEDULE" = "17 9 * * 0" ] || [ "$RUN_MODE" = "weekly" ]; then
+            echo "mode=weekly" >> "$GITHUB_OUTPUT"
+            args=(weekly)
+            if [ -n "$DATE" ]; then args+=(--week-ending "$DATE"); fi
+            negprice "${args[@]}"
             exit 0
           fi
           args=(run --deadline 16:00)
@@ -84,6 +107,8 @@ jobs:
           if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
           if [ "$MODE" = "pvpc" ]; then
             git commit -m "data: PVPC context for $DATE"
+          elif [ "$MODE" = "weekly" ]; then
+            git commit -m "data: weekly summary week ending $DATE"
           else
             git commit -m "data: OMIE day-ahead for $DATE"
           fi
@@ -97,10 +122,20 @@ jobs:
       # X drafts are never committed (drafts/ is gitignored). They are kept as a short-lived artifact for
       # Josh to review. Note: on a public repo, artifacts can be downloaded by any signed-in GitHub user.
       - name: Upload X draft (artifact, not committed)
-        if: steps.run.outputs.processed == 'true' && steps.run.outputs.mode != 'pvpc'
+        if: >-
+          steps.run.outputs.processed == 'true' && steps.run.outputs.mode != 'pvpc'
+          && steps.run.outputs.mode != 'weekly'
         uses: actions/upload-artifact@v4
         with:
           name: x-draft-${{ steps.run.outputs.date }}
+          path: drafts/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload weekly X drafts (artifact, not committed)
+        if: steps.run.outputs.processed == 'true' && steps.run.outputs.mode == 'weekly'
+        uses: actions/upload-artifact@v4
+        with:
+          name: x-draft-weekly-${{ steps.run.outputs.date }}
           path: drafts/
           if-no-files-found: ignore
           retention-days: 14

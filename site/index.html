@@ -38,6 +38,17 @@ footer { margin-top: 2rem; font-size: .85rem; color: #52514e; }
 <tr><th>Midday (10–18) vs evening (19–23)</th><td>7.01 vs 209.15 €/MWh (spread 202.14)</td></tr>
 <tr><th>Zero-price days in 2026 so far</th><td>151 (same date last year: 111; last 365 days: 159)</td></tr>
 </table>
+<h2>This week</h2>
+<p>Week of Mon 28 Sep – Sun 4 Oct: 0 of 672 periods at or below €0
+(0 negative) on 0 of 7 days. Lowest price 1.08 €/MWh
+(Tue 14:00). Midday 107.55 vs evening 222.98 €/MWh
+(spread 115.43). Cheapest estimated 2.0TD 3 hours: Tue 14:00–17:00 at 0.095 €/kWh (an <strong>estimate</strong>, not a bill). Zero-price days in 2026 as of 2026-10-04:
+148 (same date last year: 110).</p>
+<a href="weekly/2026-10-04.png"><img src="weekly/latest.png" width="540"
+  alt="Weekly summary chart for the week of Mon 28 Sep – Sun 4 Oct"></a>
+<p class="note">Wholesale day-ahead prices, Monday to Sunday (Europe/Madrid). Data:
+<a href="weekly/latest.json">weekly/latest.json</a> (also <a href="weekly/2026-10-04.json">2026-10-04.json</a>,
+<a href="weekly/2026-10-04.png">2026-10-04.png</a>).</p>
 <h2>What a 2.0TD / 3.0TD customer might pay (estimate)</h2>
 <p>Estimated price per kWh, taxes included, if you paid the day-ahead price plus tolls, charges and
 taxes on Sat 2026-10-10 (peninsula; 2.0TD day type D,
@@ -134,6 +145,7 @@ cost)</th></tr>
 <li><a href="latest.json">latest.json</a> — latest day summary (schema_version 1)</li>
 <li><a href="feed.xml">feed.xml</a> — RSS, one item per day</li>
 <li><a href="estimate/latest.json">estimate/latest.json</a> — retail price estimate for the latest day</li>
+<li><a href="weekly/latest.json">weekly/latest.json</a> — latest Monday–Sunday summary</li>
 <li>Full history (CSV): <a href="https://github.com/jvanders22/spain-negative-price-alert/tree/main/data/history">data/history</a></li>
 </ul>
 <footer>Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill. Source file: marginalpdbc_20261010.1. <a href="https://github.com/jvanders22/spain-negative-price-alert">Code</a>.</footer>
