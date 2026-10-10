@@ -1,6 +1,7 @@
 """Published outputs, all derived from data/history/ (so ``rebuild`` can regenerate them offline).
 
-site/latest.json, site/feed.xml, site/charts/<date>.png + latest.png, site/index.html, drafts/<date>.md.
+site/latest.json, site/feed.xml, site/charts/<date>.png + latest.png, site/index.html, drafts/<date>.md,
+plus the retail-estimate files written by ``retail_site`` (site/estimate/*, site/wholesale-vs-bill.html).
 Nothing reads the wall clock, so rebuilding from the same history is byte-identical.
 """
 
@@ -19,7 +20,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from . import draft, history  # noqa: E402
+from . import draft, history, retail_site  # noqa: E402
 from . import summary as sm  # noqa: E402
 
 SCHEMA_VERSION = 1
@@ -156,7 +157,7 @@ def _strip_color(n_le0: int) -> str:
     return STRIP_COLORS[0 if n_le0 == 0 else min(4, 1 + n_le0 // 12)]
 
 
-def index_html(s: dict, recent: list[dict]) -> str:
+def index_html(s: dict, recent: list[dict], estimate_section: str = "") -> str:
     e = html.escape
     c = s["cheapest_3h"]
     rows = [
@@ -201,6 +202,7 @@ img {{ max-width: 100%; height: auto; }}
 .cell {{ width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center;
   font-size: .7rem; border-radius: 4px; color: #0b0b0b; }}
 footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
+.note {{ font-size: .85rem; color: #52514e; }}
 </style>
 </head>
 <body>
@@ -212,6 +214,7 @@ footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 <table>
 {table}
 </table>
+{estimate_section}
 <h2>Last {len(recent)} days</h2>
 <p>Each cell is a delivery day, shaded by the number of periods at or below €0 (grey = none).</p>
 <div class="strip">
@@ -221,6 +224,7 @@ footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 <ul>
 <li><a href="latest.json">latest.json</a> — latest day summary (schema_version {SCHEMA_VERSION})</li>
 <li><a href="feed.xml">feed.xml</a> — RSS, one item per day</li>
+<li><a href="estimate/latest.json">estimate/latest.json</a> — retail price estimate for the latest day</li>
 <li>Full history (CSV): <a href="{REPO_URL}/tree/main/data/history">data/history</a></li>
 </ul>
 <footer>{e(ATTRIBUTION)} Source file: {e(s["source"]["file"])}. <a href="{REPO_URL}">Code</a>.</footer>
@@ -254,7 +258,8 @@ def complete(root: Path, day: dt.date) -> bool:
     """True when the per-day and site outputs for ``day`` exist."""
     root = Path(root)
     need = [root / "drafts" / f"{day}.md", root / "site" / "charts" / f"{day}.png"]
-    need += [root / "site" / n for n in ("latest.json", "feed.xml", "index.html", "charts/latest.png")]
+    names = ("latest.json", "feed.xml", "index.html", "charts/latest.png", "estimate/latest.json")
+    need += [root / "site" / n for n in (*names, retail_site.EXPLAINER)]
     return all(p.exists() for p in need)
 
 
@@ -271,8 +276,9 @@ def build(root: Path, chart_dates: list[dt.date] = ()) -> dict | None:
     site = root / "site"
     _write_text(site / "latest.json", latest_json(latest))
     _write_text(site / "feed.xml", feed_xml(recent))
-    _write_text(site / "index.html", index_html(latest, recent))
     periods = history.read_periods(root)
+    est = retail_site.write(root, dates[-1], periods[periods["date"] == dates[-1].isoformat()])
+    _write_text(site / "index.html", index_html(latest, recent, retail_site.index_section(est)))
     for day in sorted({*chart_dates, dates[-1]}):
         s = latest if day == dates[-1] else summaries(root, [day])[0]
         paths = [site / "charts" / f"{day}.png"] + (
