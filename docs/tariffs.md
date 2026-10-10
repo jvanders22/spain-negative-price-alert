@@ -167,8 +167,15 @@ estimate, and it is shown next to 3.0TD figures only as a reference.
 PVPC for day D is published around 20:15 Madrid on D-1, about seven hours after OMIE. Raw responses are
 cached in `data/pvpc/<date>.json` when they hold values. `negprice run` tries to cache the delivery day
 and the day before, and never fails if ESIOS does; site builds read the cache only, so they stay offline
-and deterministic. At the scheduled run times the delivery day's PVPC is normally not out yet, so the
-column on the site is empty until a later `run --force` or `estimate` fetches it and the site is rebuilt.
+and deterministic. A cache file that can't be read or parsed is ignored with a warning (the estimate is
+built without PVPC). At the afternoon run times the delivery day's PVPC is not out yet, so the scheduled
+evening job `negprice pvpc-refresh` (≈ 21:17 Madrid) fetches it for the latest stored day and the day
+before and rebuilds the site when something new was cached.
+
+PVPC is only partly a spot price: Real Decreto 446/2023 (<https://www.boe.es/eli/es/rd/2023/06/13/446>)
+indexes 55% of the PVPC energy price to a basket of futures in 2026, the rest to the day-ahead and
+intraday markets. A €0 wholesale hour therefore moves a PVPC bill less than an indexed free-market
+contract.
 
 ## Outputs
 

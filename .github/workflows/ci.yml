@@ -21,3 +21,4 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest -q
+      - run: python scripts/build_case_study.py --check

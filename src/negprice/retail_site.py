@@ -10,6 +10,7 @@ import datetime as dt
 import html
 import io
 import json
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +22,9 @@ from . import tariffs as tf
 SCHEMA_VERSION = 1
 SITE_TARIFFS = ("2.0TD", "3.0TD")
 EXPLAINER = "wholesale-vs-bill.html"
+# Real Decreto 446/2023, de 13 de junio: share of the PVPC energy price indexed to futures in 2026.
+PVPC_RD_URL = "https://www.boe.es/eli/es/rd/2023/06/13/446"
+PVPC_FUTURES_SHARE_2026 = 0.55
 SECTION_TITLE = "What a 2.0TD / 3.0TD customer might pay (estimate)"
 STYLE = """body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem;
   color: #0b0b0b; background: #fcfcfb; line-height: 1.45; }
@@ -33,6 +37,17 @@ th { font-weight: 600; color: #52514e; }
 footer { margin-top: 2rem; }"""
 
 
+def cached_pvpc(root: Path, day: dt.date) -> pd.DataFrame | None:
+    """PVPC from the cache, or None (with a line on stderr) when the cache file can't be read or parsed.
+    PVPC is a context column only, so a bad cache file must never stop the site build."""
+    try:
+        return pvpc.load_cached(root, day)
+    except Exception as e:  # noqa: BLE001 - PVPC is optional context
+        path = pvpc.cache_path(root, day)
+        print(f"pvpc {day}: ignoring cache {path} ({type(e).__name__}: {e})", file=sys.stderr)
+        return None
+
+
 def bundle(root: Path, day: dt.date, day_df: pd.DataFrame) -> dict | None:
     """Estimates and reports for ``SITE_TARIFFS`` with default assumptions and cached PVPC. None when the
     day is outside the year of the tariff tables (the site then says so instead of showing numbers)."""
@@ -41,7 +56,7 @@ def bundle(root: Path, day: dt.date, day_df: pd.DataFrame) -> dict | None:
     except tf.TariffYearError:
         return None
     a = retail.Assumptions()
-    pv = pvpc.load_cached(root, day)
+    pv = cached_pvpc(root, day)
     frames = {t: retail.estimate(day_df, t, a, pv) for t in SITE_TARIFFS}
     return {
         "date": day.isoformat(),
@@ -187,9 +202,8 @@ def worked_example(b: dict) -> tuple[list[str], list[tuple[str, list[str]]]]:
     cases = []
     for label, i in (("cheapest", df["omie_eur_mwh"].idxmin()), ("dearest", df["omie_eur_mwh"].idxmax())):
         row = df.loc[i]
-        cases.append(
-            (f"{b['date']} {row['local_start']}, {label} wholesale", row["omie_eur_mwh"], row["period"])
-        )
+        when = sm._hhmm(row["ts_utc"], dt.date.fromisoformat(b["date"]))
+        cases.append((f"{b['date']} {when}, {label} wholesale", row["omie_eur_mwh"], row["period"]))
     low = float(df["omie_eur_mwh"].min())
     for p in ("P3", "P2", "P1"):
         cases.append((f"same {low:.2f} €/MWh in a weekday {tf.PERIOD_NAMES_20TD[p]} hour", low, p))
@@ -314,6 +328,10 @@ fixed-date national holidays</td><td>{p3:.6f}</td></tr>
 (punta), where peajes and cargos alone are {p1:.6f} €/kWh before taxes, against {p2:.6f} in llano
 and {p3:.6f} in valle. So the cheapest wholesale hours are often not the cheapest hours to consume,
 and at weekends (all valle) the two line up.</p>
+<p>PVPC, the regulated tariff, follows the spot market only in part: under
+<a href="{PVPC_RD_URL}">Real Decreto 446/2023</a>, {PVPC_FUTURES_SHARE_2026:.0%} of its energy price in
+2026 is indexed to a basket of futures and the rest to the day-ahead and intraday markets, so a €0
+wholesale hour moves a PVPC bill less than it moves an indexed free-market contract.</p>
 <h2>Worked example</h2>
 {example}
 <h2>Assumptions</h2>
