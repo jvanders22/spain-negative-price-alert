@@ -77,8 +77,9 @@ $V shot  <feature-id> <name> <url>    # headless Chrome screenshot + rendered DO
 Real handles in this repo: CLI subcommands `run`, `rebuild`, `estimate`, `weekly`, `pvpc-refresh`; fixture
 `tests/fixtures/marginalpdbc_20261010.1` (Sat 10 Oct 2026, 96 quarter-hours, 18 at or below €0); page title
 `Spain day-ahead zero-price alert — <date>`; H2s `This week`, `What a 2.0TD / 3.0TD customer might pay
-(estimate)`, `Last 30 days`, `Data`; files `latest.json`, `feed.xml`, `charts/latest.png`,
-`estimate/latest.json`, `estimate/<date>-<tariff>.csv`, `weekly/latest.json`, `wholesale-vs-bill.html`.
+(estimate)`, `Last 30 days`, `Data`; files `site/latest.json`, `site/feed.xml`, `site/charts/latest.png`,
+`site/estimate/latest.json`, `site/estimate/<date>-<tariff>.csv`, `site/weekly/latest.json`,
+`site/wholesale-vs-bill.html` (in the scratch build: `$ROOT/site/...`; served at `$URL<path under site/>`).
 Schema: `src/negprice/latest.schema.json`.
 
 ## Evidence
@@ -115,7 +116,7 @@ lists the evidence files that remain. Run it after every attempt, including fail
 
 ## Helpers
 
-`scripts/verify.sh` subcommands: `launch [RUN_ID]`, `env`, `doctor [--no-live]`,
+`.cursor/skills/verify-negprice/scripts/verify.sh` subcommands: `launch [RUN_ID]`, `env`, `doctor [--no-live]`,
 `cli [--offline] FEATURE NAME -- CMD...`, `fetch FEATURE NAME URL`, `shot FEATURE NAME URL`, `stop`,
 `cleanup`. Run it with no arguments for usage. Requires bash, python3, curl, ss, unshare, git, and Chrome
 or Chromium for `shot`.
