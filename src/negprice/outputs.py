@@ -22,6 +22,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
+from negprice import calendar_feed  # noqa: E402
+from negprice.site_config import goatcounter_tag  # noqa: E402
+
 from . import draft, history, retail_site  # noqa: E402
 from . import summary as sm  # noqa: E402
 
@@ -252,7 +255,7 @@ img {{ max-width: 100%; height: auto; }}
 footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 .note {{ font-size: .85rem; color: #52514e; }}
 </style>
-</head>
+{goatcounter_tag()}</head>
 <body>
 <h1>Spain day-ahead power: {e(s["weekday"])} {e(s["date"])}</h1>
 <p class="status">{status}. Wholesale OMIE prices, Spain zone,
@@ -273,6 +276,7 @@ footer {{ margin-top: 2rem; font-size: .85rem; color: #52514e; }}
 <ul>
 <li><a href="latest.json">latest.json</a> — latest day summary (schema_version {SCHEMA_VERSION})</li>
 <li><a href="feed.xml">feed.xml</a> — RSS, one item per day</li>
+<li><a href="calendar/">calendar/</a> — free-power hours as a calendar you can subscribe to</li>
 <li><a href="estimate/latest.json">estimate/latest.json</a> — retail price estimate for the latest day</li>
 {weekly_item}<li>Full history (CSV): <a href="{REPO_URL}/tree/main/data/history">data/history</a></li>
 </ul>
@@ -349,6 +353,7 @@ def build(root: Path, chart_dates: list[dt.date] = ()) -> dict | None:
     periods = history.read_periods(root)
     est = retail_site.write(root, dates[-1], periods[periods["date"] == dates[-1].isoformat()])
     _write_index(root, latest, recent, est)
+    calendar_feed.build(root, periods)
     for day in sorted({*chart_dates, dates[-1]}):
         s = latest if day == dates[-1] else summaries(root, [day])[0]
         paths = [site / "charts" / f"{day}.png"] + (

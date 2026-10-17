@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free power calendar — Spain and Portugal</title>
+<meta name="description" content="Subscribe to a calendar of the hours when wholesale electricity in Spain or Portugal costs €0 or less.">
+<link rel="alternate" type="text/calendar" href="es.ics" title="Free power (Spain)">
+<style>
+:root { --paper: #fbfaf7; --ink: #1b1b1b; --muted: #5a5853; --accent: #b8461b; --free: #2b6c9e; }
+body { margin: 0 auto; max-width: 40rem; padding: 2rem 1.25rem 3rem; background: var(--paper); color: var(--ink);
+  font: 17px/1.55 "Source Serif 4", Georgia, serif; }
+h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 .5rem; font-weight: 600; }
+h2 { font: 600 1rem/1.3 "Source Sans 3", "Helvetica Neue", Arial, sans-serif; margin: 2rem 0 .5rem;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.lede { font-size: 1.15rem; }
+.free { color: var(--free); font-weight: 600; }
+a { color: var(--accent); }
+table { border-collapse: collapse; width: 100%; font: 16px/1.4 "Source Sans 3", "Helvetica Neue", Arial, sans-serif; }
+th, td { text-align: left; padding: .45rem .6rem .45rem 0; vertical-align: top; }
+th { font-weight: 600; }
+ul { padding-left: 1.2rem; }
+.small { font: 14px/1.45 "Source Sans 3", "Helvetica Neue", Arial, sans-serif; color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>Free power calendar</h1>
+<p class="lede">Some days, solar pushes the Spanish and Portuguese wholesale electricity price to
+<span class="free">€0 or below</span>. Subscribe once and those hours appear in your calendar the day
+before, as soon as the market result is out (around 13:00 Madrid time).</p>
+
+<h2>Next</h2>
+<p>Sunday 18 October, Spain (Madrid time):</p><ul><li>Free power 11:45-16:00</li></ul>
+<p>Sunday 18 October, Portugal (Lisbon time):</p><ul><li>Free power 10:45-15:00</li></ul>
+
+<h2>Subscribe</h2>
+<table>
+<tr><th scope="row">Spain, €0 or less</th><td><a href="webcal://jvanders22.github.io/spain-negative-price-alert/calendar/es.ics">Apple / Outlook</a></td><td><a href="https://calendar.google.com/calendar/r?cid=webcal://jvanders22.github.io/spain-negative-price-alert/calendar/es.ics">Google</a></td><td><a href="https://jvanders22.github.io/spain-negative-price-alert/calendar/es.ics">.ics link</a></td></tr>
+<tr><th scope="row">Portugal, €0 or less</th><td><a href="webcal://jvanders22.github.io/spain-negative-price-alert/calendar/pt.ics">Apple / Outlook</a></td><td><a href="https://calendar.google.com/calendar/r?cid=webcal://jvanders22.github.io/spain-negative-price-alert/calendar/pt.ics">Google</a></td><td><a href="https://jvanders22.github.io/spain-negative-price-alert/calendar/pt.ics">.ics link</a></td></tr>
+<tr><th scope="row">Spain, €10 or less</th><td><a href="webcal://jvanders22.github.io/spain-negative-price-alert/calendar/es-cheap.ics">Apple / Outlook</a></td><td><a href="https://calendar.google.com/calendar/r?cid=webcal://jvanders22.github.io/spain-negative-price-alert/calendar/es-cheap.ics">Google</a></td><td><a href="https://jvanders22.github.io/spain-negative-price-alert/calendar/es-cheap.ics">.ics link</a></td></tr>
+<tr><th scope="row">Portugal, €10 or less</th><td><a href="webcal://jvanders22.github.io/spain-negative-price-alert/calendar/pt-cheap.ics">Apple / Outlook</a></td><td><a href="https://calendar.google.com/calendar/r?cid=webcal://jvanders22.github.io/spain-negative-price-alert/calendar/pt-cheap.ics">Google</a></td><td><a href="https://jvanders22.github.io/spain-negative-price-alert/calendar/pt-cheap.ics">.ics link</a></td></tr>
+</table>
+<p class="small">On a phone or Mac, "Apple / Outlook" opens your calendar app. "Google" opens Google
+Calendar's add-by-URL screen; on Android, subscribe on calendar.google.com from a browser, then it syncs.
+Anywhere else, copy the .ics link and add it as a calendar "from URL".</p>
+
+<h2>How fresh is it?</h2>
+<p>The feed itself updates within the hour after OMIE publishes. Your calendar app decides when to look:
+Apple Calendar lets you pick (set Auto-refresh to every hour or 5 minutes);
+<strong>Google Calendar refreshes subscribed calendars only every 12 to 24 hours</strong> and has no
+refresh button, so with Google an event can show up late, sometimes after the hours have passed. If you
+need it on time, use the <a href="../feed.xml">RSS feed</a> or the email alert instead.</p>
+
+<h2>What the events mean</h2>
+<ul>
+<li><strong>Confirmed</strong>: the OMIE day-ahead result for tomorrow. These prices are final.</li>
+<li>The Spain feeds include the PVPC (regulated tariff) price for those hours and the 2.0TD period.
+Grid tolls and charges still apply, so your bill is never zero; these are simply the cheapest hours.</li>
+<li>If a window is withdrawn it stays in the calendar marked "Cancelled" for a few days.</li>
+<li>Events are marked "free" (not busy), so they never block your schedule.</li>
+</ul>
+<p>Coming next: "likely" windows two days ahead from a price forecast.</p>
+
+<h2>Other ways to follow</h2>
+<ul>
+<li><a href="../feed.xml">RSS feed</a>, one item per day</li>
+<li><a href="https://github.com/jvanders22/spain-negative-price-alert#email-alert">Email alert</a></li>
+<li><a href="../">Today's prices</a></li>
+</ul>
+
+<p class="small">Prices: OMIE (omie.es), day-ahead market. PVPC: Red Eléctrica (REE). Wholesale prices,
+not your retail bill. <a href="https://github.com/jvanders22/spain-negative-price-alert">Code and data</a>.</p>
+</body>
+</html>

@@ -182,6 +182,22 @@ Charts and drafts are drawn for the processed day and the latest day only (not f
 All outputs are derived from `data/history/` and contain no wall-clock timestamps, so re-running a day or
 running `rebuild` leaves them byte-identical.
 
+## Calendar
+
+Subscribable calendars of the windows when the day-ahead price is at or below €0/MWh (and a ≤ €10
+variant), at <https://jvanders22.github.io/spain-negative-price-alert/calendar/>:
+`es.ics`, `pt.ics`, `es-cheap.ics`, `pt-cheap.ics`. Built by `src/negprice/calendar_feed.py` on
+every `run`, `pvpc-refresh` and `rebuild`.
+
+- One event per contiguous window, titled e.g. "Free power 13:00-16:00 (confirmed)". Times are
+  stored in UTC, titles use local time (Madrid for ES, Lisbon for PT). Events are TRANSP:TRANSPARENT.
+- UID `free-es-YYYYMMDD-HHMMZ@jvanders22.github.io` (day + UTC start). `site/calendar/state.json`
+  keeps every UID's content hash and SEQUENCE: changed content (e.g. the PVPC line arriving in the
+  evening) bumps SEQUENCE, a window that disappears is kept as STATUS:CANCELLED. 14 days retained.
+- Headers `REFRESH-INTERVAL;VALUE=DURATION:PT1H` and `X-PUBLISHED-TTL:PT1H`. Google Calendar ignores
+  them and refreshes subscriptions every 12–24 h.
+- v1 is D+1 only ("confirmed"). D+2 "likely" windows from the spain-power-prices forecast are next.
+
 ## Retail estimate
 
 A €0 wholesale price is not a €0 bill. `negprice estimate` turns a stored day into an **estimated** price
