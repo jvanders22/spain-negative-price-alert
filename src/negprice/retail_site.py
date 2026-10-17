@@ -15,6 +15,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from negprice.site_config import goatcounter_tag
+
 from . import pvpc, retail
 from . import summary as sm
 from . import tariffs as tf
@@ -290,7 +292,7 @@ into each 2.0TD period, which is what a working weekday does to it.</p>
 <style>
 {STYLE}
 </style>
-</head>
+{goatcounter_tag()}</head>
 <body>
 <h1>Wholesale is not your bill</h1>
 <p class="note">Every number on this page is an estimate. {e(retail.DISCLAIMER)}
