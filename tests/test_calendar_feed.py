@@ -170,8 +170,11 @@ def test_dst_end_25_oct_2026(tmp_path):
     cf.build(tmp_path, periods_for({day: prices}))
     evs = events(read(tmp_path))
     by_title = {str(e["SUMMARY"]): e for e in evs.values()}
-    assert set(by_title) == {"Free power 02:00-04:00 (confirmed)", "Free power 13:00-15:00 (confirmed)"}
-    night = by_title["Free power 02:00-04:00 (confirmed)"]
+    assert set(by_title) == {
+        "Free power 02:00 CEST-04:00 CET (confirmed)",
+        "Free power 13:00-15:00 (confirmed)",
+    }
+    night = by_title["Free power 02:00 CEST-04:00 CET (confirmed)"]
     assert night["DTEND"].dt - night["DTSTART"].dt == dt.timedelta(hours=3)  # spans the fold
     assert night["DTSTART"].dt == dt.datetime(2026, 10, 25, 0, 0, tzinfo=dt.UTC)
     mid = by_title["Free power 13:00-15:00 (confirmed)"]
@@ -203,3 +206,34 @@ def test_retention_drops_old_days(built):
     cf.build(root, pd.concat([p, periods_for(late)]))
     assert events(read(root)) == {}
     assert json.loads((root / "site/calendar/state.json").read_text())["es"] == {}
+
+
+def test_window_inside_dst_fold_names_the_clock(tmp_path):
+    day = "2026-10-25"
+    start, end = sm.day_bounds_utc(dt.date.fromisoformat(day))
+    ts = pd.date_range(start, end, freq="15min", inclusive="left")
+    lo, hi = pd.Timestamp("2026-10-25T00:30Z"), pd.Timestamp("2026-10-25T01:30Z")
+    cf.build(tmp_path, periods_for({day: [0.0 if lo <= t < hi else 40.0 for t in ts]}))
+    (ev,) = events(read(tmp_path)).values()
+    assert str(ev["SUMMARY"]) == "Free power 02:30 CEST-02:30 CET (confirmed)"
+
+
+def test_revision_dtstamp_moves_forward(built, monkeypatch):
+    root, p = built
+    uid = "free-es-20261015-1000Z@jvanders22.github.io"
+    before = events(read(root))[uid]["DTSTAMP"].dt
+    hours = pd.date_range("2026-10-14T22:00Z", periods=24, freq="h")
+    df = pd.DataFrame({"ts_utc": hours, "local_hour": range(24), "pcb_eur_mwh": 80.0})
+    monkeypatch.setattr(cf.pvpc, "load", lambda root, day, fetch=False: df)
+    cf.build(root, p)
+    ev = events(read(root))[uid]
+    assert ev["DTSTAMP"].dt > before and ev["LAST-MODIFIED"].dt == ev["DTSTAMP"].dt
+
+
+def test_rerun_on_existing_files_is_byte_identical_and_crlf(built):
+    root, p = built
+    path = root / "site/calendar/es.ics"
+    mtime = path.stat().st_mtime_ns
+    cf.build(root, p)
+    assert path.stat().st_mtime_ns == mtime  # unchanged file not rewritten
+    assert b"\r\n" in path.read_bytes()

@@ -167,6 +167,8 @@ def event_for(root: Path, feed: Feed, w: dict, latest: dt.date | None = None) ->
     ls = w["start"].tz_convert(feed.tz)
     le = w["end"].tz_convert(feed.tz)
     span = f"{ls:%H:%M}-{le:%H:%M}"
+    if ls.utcoffset() != le.utcoffset():  # DST change inside the window: say which clock
+        span = f"{ls:%H:%M %Z}-{le:%H:%M %Z}"
     if feed.kind == "free":
         summary = f"Free power {span} (confirmed)"
         what = "at or below €0/MWh"
@@ -202,6 +204,14 @@ def _hash(ev: dict) -> str:
     return hashlib.sha256(json.dumps([ev[k] for k in keys], ensure_ascii=False).encode()).hexdigest()[:16]
 
 
+def revision_stamp(day: dt.date) -> str:
+    """D-1 21:00 Madrid in UTC: after the evening PVPC publication, when revisions are published."""
+    t = pd.Timestamp(dt.datetime.combine(day - dt.timedelta(days=1), dt.time(21))).tz_localize(
+        "Europe/Madrid"
+    )
+    return t.tz_convert("UTC").strftime("%Y%m%dT%H%M%SZ")
+
+
 def publication_stamp(day: dt.date) -> str:
     """D-1 13:00 Madrid in UTC: when OMIE publishes the day-ahead result for ``day``."""
     t = pd.Timestamp(dt.datetime.combine(day - dt.timedelta(days=1), dt.time(13))).tz_localize(
@@ -217,7 +227,7 @@ def reconcile(events: list[dict], state: dict, latest: dt.date) -> tuple[list[di
     """Assign SEQUENCE/DTSTAMP from ``state``; emit cancellations for vanished UIDs.
     Returns (events to publish incl. cancelled ones, new state)."""
     retain_from = (latest - dt.timedelta(days=RETAIN_DAYS - 1)).isoformat()
-    stamp_now = publication_stamp(latest)
+    stamp_now = revision_stamp(latest)
     new_state: dict = {}
     out: list[dict] = []
     current = {e["uid"]: e for e in events if e["date"] >= retain_from}
@@ -448,8 +458,9 @@ def build(root: Path, periods: pd.DataFrame | None = None) -> dict[str, list[dic
 
 
 def _write(path: Path, text: str, newline: str | None = None) -> None:
+    """Write UTF-8 bytes as given (CRLF kept); skip unchanged files. ``newline`` is unused."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists() and path.read_text(encoding="utf-8", newline=newline or "") == text:
+    data = text.encode("utf-8")
+    if path.exists() and path.read_bytes() == data:
         return
-    with open(path, "w", encoding="utf-8", newline=newline or "\n") as f:
-        f.write(text)
+    path.write_bytes(data)

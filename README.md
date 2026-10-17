@@ -197,6 +197,9 @@ every `run`, `pvpc-refresh` and `rebuild`.
 - Headers `REFRESH-INTERVAL;VALUE=DURATION:PT1H` and `X-PUBLISHED-TTL:PT1H`. Google Calendar ignores
   them and refreshes subscriptions every 12–24 h.
 - v1 is D+1 only ("confirmed"). D+2 "likely" windows from the spain-power-prices forecast are next.
+- Known v1 limits: windows are grouped by Madrid delivery day, so a Portugal window crossing 23:00
+  Lisbon would split in two; if a day vanished from history inside retention its events would be
+  marked cancelled until it returned.
 
 ## Retail estimate
 
