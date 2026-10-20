@@ -128,4 +128,23 @@ DESCRIPTION:Wholesale power in Portugal is at or below €10/MWh from 09:00
 TRANSP:TRANSPARENT
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
+BEGIN:VEVENT
+UID:cheap-pt-20261021-0845Z@jvanders22.github.io
+DTSTAMP:20261020T110000Z
+LAST-MODIFIED:20261020T110000Z
+DTSTART:20261021T084500Z
+DTEND:20261021T151500Z
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Cheap power ≤ €10 09:45-16:15 (confirmed)
+DESCRIPTION:Wholesale power in Portugal is at or below €10/MWh from 09:45
+  to 16:15 Lisbon time on Wed 21 Oct 2026. Lowest €0.30/MWh\, average €
+ 1.12/MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:0
+ 0 Madrid time the day before.\nGood hours to run the dishwasher or washing
+  machine\, charge an EV or heat water.\nWholesale price\, not your retail 
+ bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-ne
+ gative-price-alert/calendar/
+TRANSP:TRANSPARENT
+URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
+END:VEVENT
 END:VCALENDAR
