@@ -14,25 +14,6 @@ REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/pt.ics
 BEGIN:VEVENT
-UID:free-pt-20261010-1030Z@jvanders22.github.io
-DTSTAMP:20261009T110000Z
-LAST-MODIFIED:20261009T110000Z
-DTSTART:20261010T103000Z
-DTEND:20261010T150000Z
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:Free power 11:30-16:00 (confirmed)
-DESCRIPTION:Wholesale power in Portugal is at or below €0/MWh from 11:30 
- to 16:00 Lisbon time on Sat 10 Oct 2026. Lowest −€0.01/MWh\, average 
- −€0.00/MWh.\nConfirmed: OMIE day-ahead market result\, published aroun
- d 13:00 Madrid time the day before.\nGood hours to run the dishwasher or w
- ashing machine\, charge an EV or heat water.\nWholesale price\, not your r
- etail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/sp
- ain-negative-price-alert/calendar/
-TRANSP:TRANSPARENT
-URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
-END:VEVENT
-BEGIN:VEVENT
 UID:free-pt-20261018-0945Z@jvanders22.github.io
 DTSTAMP:20261017T110000Z
 LAST-MODIFIED:20261017T110000Z
@@ -48,6 +29,25 @@ DESCRIPTION:Wholesale power in Portugal is at or below €0/MWh from 10:45
  machine\, charge an EV or heat water.\nWholesale price\, not your retail b
  ill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-neg
  ative-price-alert/calendar/
+TRANSP:TRANSPARENT
+URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
+END:VEVENT
+BEGIN:VEVENT
+UID:free-pt-20261024-1000Z@jvanders22.github.io
+DTSTAMP:20261023T110000Z
+LAST-MODIFIED:20261023T110000Z
+DTSTART:20261024T100000Z
+DTEND:20261024T150000Z
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Free power 11:00-16:00 (confirmed)
+DESCRIPTION:Wholesale power in Portugal is at or below €0/MWh from 11:00 
+ to 16:00 Lisbon time on Sat 24 Oct 2026. Lowest −€0.01/MWh\, average 
+ −€0.00/MWh.\nConfirmed: OMIE day-ahead market result\, published aroun
+ d 13:00 Madrid time the day before.\nGood hours to run the dishwasher or w
+ ashing machine\, charge an EV or heat water.\nWholesale price\, not your r
+ etail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/sp
+ ain-negative-price-alert/calendar/
 TRANSP:TRANSPARENT
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
