@@ -32,20 +32,20 @@
    "start": "20261024T100000Z",
    "status": "CONFIRMED",
    "summary": "Free power 12:00-17:00 (confirmed)"
+  },
+  "free-es-20261025-0815Z@jvanders22.github.io": {
+   "date": "2026-10-25",
+   "description": "Wholesale power in Spain is at or below €0/MWh from 09:15 to 16:15 Madrid time on Sun 25 Oct 2026. Lowest −€1.46/MWh, average −€0.82/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 valle. The PVPC price is added when REE publishes it, around 20:15 the evening before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
+   "end": "20261025T151500Z",
+   "hash": "a30b4f19b3fe4c68",
+   "seq": 0,
+   "stamp": "20261024T110000Z",
+   "start": "20261025T081500Z",
+   "status": "CONFIRMED",
+   "summary": "Free power 09:15-16:15 (confirmed)"
   }
  },
  "es-cheap": {
-  "cheap-es-20261011-0945Z@jvanders22.github.io": {
-   "date": "2026-10-11",
-   "description": "Wholesale power in Spain is at or below €10/MWh from 11:45 to 17:00 Madrid time on Sun 11 Oct 2026. Lowest €0.51/MWh, average €1.19/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nPVPC (regulated 2.0TD tariff): about 0.3 c/kWh in these hours, period P3 valle (11:45–17:00). Grid tolls and charges still apply, so retail power is never free; it is just at its cheapest.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
-   "end": "20261011T150000Z",
-   "hash": "1c1ab78e97b56001",
-   "seq": 0,
-   "stamp": "20261010T110000Z",
-   "start": "20261011T094500Z",
-   "status": "CONFIRMED",
-   "summary": "Cheap power ≤ €10 11:45-17:00 (confirmed)"
-  },
   "cheap-es-20261012-0845Z@jvanders22.github.io": {
    "date": "2026-10-12",
    "description": "Wholesale power in Spain is at or below €10/MWh from 10:45 to 17:30 Madrid time on Mon 12 Oct 2026. Lowest €0.00/MWh, average €0.55/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nPVPC (regulated 2.0TD tariff): about 0.6 c/kWh in these hours, period P3 valle (10:45–17:30). Grid tolls and charges still apply, so retail power is never free; it is just at its cheapest.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
@@ -122,6 +122,17 @@
    "start": "20261024T090000Z",
    "status": "CONFIRMED",
    "summary": "Cheap power ≤ €10 11:00-17:30 (confirmed)"
+  },
+  "cheap-es-20261025-0730Z@jvanders22.github.io": {
+   "date": "2026-10-25",
+   "description": "Wholesale power in Spain is at or below €10/MWh from 08:30 to 16:45 Madrid time on Sun 25 Oct 2026. Lowest −€1.46/MWh, average −€0.38/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 valle. The PVPC price is added when REE publishes it, around 20:15 the evening before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
+   "end": "20261025T154500Z",
+   "hash": "addc2b995b72e336",
+   "seq": 0,
+   "stamp": "20261024T110000Z",
+   "start": "20261025T073000Z",
+   "status": "CONFIRMED",
+   "summary": "Cheap power ≤ €10 08:30-16:45 (confirmed)"
   }
  },
  "pt": {
@@ -146,20 +157,20 @@
    "start": "20261024T100000Z",
    "status": "CONFIRMED",
    "summary": "Free power 11:00-16:00 (confirmed)"
+  },
+  "free-pt-20261025-0815Z@jvanders22.github.io": {
+   "date": "2026-10-25",
+   "description": "Wholesale power in Portugal is at or below €0/MWh from 08:15 to 15:15 Lisbon time on Sun 25 Oct 2026. Lowest −€1.46/MWh, average −€0.82/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
+   "end": "20261025T151500Z",
+   "hash": "9b6903d4b09f90f2",
+   "seq": 0,
+   "stamp": "20261024T110000Z",
+   "start": "20261025T081500Z",
+   "status": "CONFIRMED",
+   "summary": "Free power 08:15-15:15 (confirmed)"
   }
  },
  "pt-cheap": {
-  "cheap-pt-20261011-0945Z@jvanders22.github.io": {
-   "date": "2026-10-11",
-   "description": "Wholesale power in Portugal is at or below €10/MWh from 10:45 to 16:00 Lisbon time on Sun 11 Oct 2026. Lowest €0.51/MWh, average €1.19/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
-   "end": "20261011T150000Z",
-   "hash": "68a91c0786c142a1",
-   "seq": 0,
-   "stamp": "20261010T110000Z",
-   "start": "20261011T094500Z",
-   "status": "CONFIRMED",
-   "summary": "Cheap power ≤ €10 10:45-16:00 (confirmed)"
-  },
   "cheap-pt-20261017-0900Z@jvanders22.github.io": {
    "date": "2026-10-17",
    "description": "Wholesale power in Portugal is at or below €10/MWh from 10:00 to 16:15 Lisbon time on Sat 17 Oct 2026. Lowest €0.99/MWh, average €2.02/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
@@ -225,6 +236,17 @@
    "start": "20261024T090000Z",
    "status": "CONFIRMED",
    "summary": "Cheap power ≤ €10 10:00-16:30 (confirmed)"
+  },
+  "cheap-pt-20261025-0730Z@jvanders22.github.io": {
+   "date": "2026-10-25",
+   "description": "Wholesale power in Portugal is at or below €10/MWh from 07:30 to 15:45 Lisbon time on Sun 25 Oct 2026. Lowest −€1.46/MWh, average −€0.38/MWh.\nConfirmed: OMIE day-ahead market result, published around 13:00 Madrid time the day before.\nGood hours to run the dishwasher or washing machine, charge an EV or heat water.\nWholesale price, not your retail bill.\nSource: OMIE (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/calendar/",
+   "end": "20261025T154500Z",
+   "hash": "ae63aa9893174a6e",
+   "seq": 0,
+   "stamp": "20261024T110000Z",
+   "start": "20261025T073000Z",
+   "status": "CONFIRMED",
+   "summary": "Cheap power ≤ €10 07:30-15:45 (confirmed)"
   }
  }
 }
