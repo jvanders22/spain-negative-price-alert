@@ -58,28 +58,28 @@ and at weekends (all valle) the two line up.</p>
 2026 is indexed to a basket of futures and the rest to the day-ahead and intraday markets, so a €0
 wholesale hour moves a PVPC bill less than it moves an indexed free-market contract.</p>
 <h2>Worked example</h2>
-<p>Computed from the OMIE prices for Sun 2026-10-25 with the
+<p>Computed from the OMIE prices for Mon 2026-10-26 with the
 default assumptions; €/kWh unless stated. The first two columns are that day's cheapest and most
 expensive wholesale periods as they actually fall; the last three put the same cheapest wholesale price
 into each 2.0TD period, which is what a working weekday does to it.</p>
 <table>
-<tr><th>2.0TD, per kWh</th><th>2026-10-25 11:00, cheapest wholesale</th><th>2026-10-25 22:00, dearest wholesale</th><th>same -1.46 €/MWh in a weekday valle hour</th><th>same -1.46 €/MWh in a weekday llano hour</th><th>same -1.46 €/MWh in a weekday punta hour</th></tr>
-<tr><th>2.0TD period</th><td>P3 (valle)</td><td>P3 (valle)</td><td>P3 (valle)</td><td>P2 (llano)</td><td>P1 (punta)</td></tr>
-<tr><th>OMIE day-ahead, €/MWh</th><td>-1.46</td><td>250.59</td><td>-1.46</td><td>-1.46</td><td>-1.46</td></tr>
-<tr><th>OMIE day-ahead</th><td>-0.001460</td><td>0.250590</td><td>-0.001460</td><td>-0.001460</td><td>-0.001460</td></tr>
+<tr><th>2.0TD, per kWh</th><th>2026-10-26 14:15, cheapest wholesale</th><th>2026-10-26 07:30, dearest wholesale</th><th>same 55.00 €/MWh in a weekday valle hour</th><th>same 55.00 €/MWh in a weekday llano hour</th><th>same 55.00 €/MWh in a weekday punta hour</th></tr>
+<tr><th>2.0TD period</th><td>P2 (llano)</td><td>P3 (valle)</td><td>P3 (valle)</td><td>P2 (llano)</td><td>P1 (punta)</td></tr>
+<tr><th>OMIE day-ahead, €/MWh</th><td>55.00</td><td>300.00</td><td>55.00</td><td>55.00</td><td>55.00</td></tr>
+<tr><th>OMIE day-ahead</th><td>0.055000</td><td>0.300000</td><td>0.055000</td><td>0.055000</td><td>0.055000</td></tr>
 <tr><th>+ adjustment services (assumed)</th><td>0.028000</td><td>0.028000</td><td>0.028000</td><td>0.028000</td><td>0.028000</td></tr>
-<tr><th>+ capacity payment</th><td>0.000000</td><td>0.000000</td><td>0.000000</td><td>0.000133</td><td>0.000800</td></tr>
-<tr><th>+ losses (16%, assumed) on the three lines above</th><td>0.004246</td><td>0.044574</td><td>0.004246</td><td>0.004268</td><td>0.004374</td></tr>
+<tr><th>+ capacity payment</th><td>0.000133</td><td>0.000000</td><td>0.000000</td><td>0.000133</td><td>0.000800</td></tr>
+<tr><th>+ losses (16%, assumed) on the three lines above</th><td>0.013301</td><td>0.052480</td><td>0.013280</td><td>0.013301</td><td>0.013408</td></tr>
 <tr><th>+ retailer margin (assumed)</th><td>0.010000</td><td>0.010000</td><td>0.010000</td><td>0.010000</td><td>0.010000</td></tr>
-<tr><th>= energy</th><td>0.040786</td><td>0.333164</td><td>0.040786</td><td>0.040941</td><td>0.041714</td></tr>
-<tr><th>+ peaje (network toll)</th><td>0.000077</td><td>0.000077</td><td>0.000077</td><td>0.016409</td><td>0.033261</td></tr>
-<tr><th>+ cargo (system charge)</th><td>0.003215</td><td>0.003215</td><td>0.003215</td><td>0.012858</td><td>0.064292</td></tr>
-<tr><th>= before taxes</th><td>0.044078</td><td>0.336456</td><td>0.044078</td><td>0.070208</td><td>0.139267</td></tr>
-<tr><th>+ electricity tax IEE (5.1127%)</th><td>0.002254</td><td>0.017202</td><td>0.002254</td><td>0.003590</td><td>0.007120</td></tr>
-<tr><th>+ IVA (21%, on top of IEE)</th><td>0.009730</td><td>0.074268</td><td>0.009730</td><td>0.015497</td><td>0.030741</td></tr>
-<tr><th>= estimate, €/kWh</th><td>0.056062</td><td>0.427927</td><td>0.056062</td><td>0.089295</td><td>0.177129</td></tr>
+<tr><th>= energy</th><td>0.106434</td><td>0.390480</td><td>0.106280</td><td>0.106434</td><td>0.107208</td></tr>
+<tr><th>+ peaje (network toll)</th><td>0.016409</td><td>0.000077</td><td>0.000077</td><td>0.016409</td><td>0.033261</td></tr>
+<tr><th>+ cargo (system charge)</th><td>0.012858</td><td>0.003215</td><td>0.003215</td><td>0.012858</td><td>0.064292</td></tr>
+<tr><th>= before taxes</th><td>0.135701</td><td>0.393772</td><td>0.109572</td><td>0.135701</td><td>0.204761</td></tr>
+<tr><th>+ electricity tax IEE (5.1127%)</th><td>0.006938</td><td>0.020132</td><td>0.005602</td><td>0.006938</td><td>0.010469</td></tr>
+<tr><th>+ IVA (21%, on top of IEE)</th><td>0.029954</td><td>0.086920</td><td>0.024187</td><td>0.029954</td><td>0.045198</td></tr>
+<tr><th>= estimate, €/kWh</th><td>0.172594</td><td>0.500824</td><td>0.139361</td><td>0.172594</td><td>0.260428</td></tr>
 </table>
-<p>Cheapest wholesale 3h: 10:30–13:30 (-1.15 €/MWh); cheapest estimated 2.0TD 3h: 10:30–13:30 (0.057 €/kWh): the same window, all in P3 (valle).</p>
+<p>Cheapest wholesale 3h: 11:45–14:45 (57.27 €/MWh); cheapest estimated 2.0TD 3h: 13:00–16:00 (0.213 €/kWh) because 11:45–14:45 is P1 (punta)/P2 (llano) (peajes+cargos average 0.0805 €/kWh vs 0.0520 in P1 (punta)/P2 (llano)); the wholesale window would cost an estimated 0.242 €/kWh.</p>
 <h2>Assumptions</h2>
 <ul>
 <li><code>loss_factor</code> = 0.16. ASSUMPTION. Busbar energy is grossed up for network losses. Default from the median ratio PVPC PMH / OMIE hourly mean = 1.161 over the 36 hours with OMIE &gt; 5 €/MWh on 9–10 Oct 2026 (the ratio includes losses and small market adjustments; official hourly loss coefficients are on ESIOS and need a token).</li>
