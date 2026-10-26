@@ -5,7 +5,14 @@
 <link>https://github.com/jvanders22/spain-negative-price-alert</link>
 <description>Daily OMIE day-ahead prices for Spain: zero/negative and cheap periods. Wholesale, not retail.</description>
 <language>en</language>
-<lastBuildDate>Sun, 25 Oct 2026 13:00:00 +0100</lastBuildDate>
+<lastBuildDate>Mon, 26 Oct 2026 13:00:00 +0100</lastBuildDate>
+<item>
+<title>Cheapest 3h: Tue 2026-10-27 — 11:45–14:45 at 107.70 €/MWh</title>
+<link>https://github.com/jvanders22/spain-negative-price-alert</link>
+<description>0 of 96 quarter-hours ≤ €0 (0 negative), 0 ≤ €10. Min 100.00 at 14:15, mean 206.89, max 290.00 €/MWh. Cheapest 3h 11:45–14:45. Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.</description>
+<guid isPermaLink="false">2026-10-27</guid>
+<pubDate>Mon, 26 Oct 2026 13:00:00 +0100</pubDate>
+</item>
 <item>
 <title>Cheapest 3h: Mon 2026-10-26 — 11:45–14:45 at 57.27 €/MWh</title>
 <link>https://github.com/jvanders22/spain-negative-price-alert</link>
@@ -208,13 +215,6 @@
 <description>0 of 96 quarter-hours ≤ €0 (0 negative), 0 ≤ €10. Min 147.32 at 13:15, mean 198.05, max 280.59 €/MWh. Cheapest 3h 12:15–15:15. Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.</description>
 <guid isPermaLink="false">2026-09-28</guid>
 <pubDate>Sun, 27 Sep 2026 13:00:00 +0200</pubDate>
-</item>
-<item>
-<title>ALERT: Sun 2026-09-27 — 20 of 96 quarter-hours at or below €0 (11:15–16:15)</title>
-<link>https://github.com/jvanders22/spain-negative-price-alert</link>
-<description>20 of 96 quarter-hours ≤ €0 (14 negative), 27 ≤ €10. Min -0.07 at 13:00, mean 113.65, max 210.26 €/MWh. Cheapest 3h 12:00–15:00. Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.</description>
-<guid isPermaLink="false">2026-09-27</guid>
-<pubDate>Sat, 26 Sep 2026 13:00:00 +0200</pubDate>
 </item>
 </channel>
 </rss>
