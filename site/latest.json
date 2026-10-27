@@ -3,8 +3,8 @@
   "units": "EUR/MWh",
   "timezone": "Europe/Madrid",
   "attribution": "Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.",
-  "date": "2026-10-27",
-  "weekday": "Tue",
+  "date": "2026-10-28",
+  "weekday": "Wed",
   "n_periods": 96,
   "mtu_min": 15,
   "n_le0": 0,
@@ -14,18 +14,18 @@
   "le0_windows": [],
   "neg_windows": [],
   "cheap_windows": [],
-  "min_price": 100.0,
-  "min_time": "14:15",
-  "max_price": 290.0,
-  "max_time": "18:30",
-  "mean_price": 206.89,
-  "midday_mean": 151.23,
-  "evening_mean": 255.9,
-  "evening_minus_midday": 104.67,
+  "min_price": 57.08,
+  "min_time": "11:15",
+  "max_price": 319.0,
+  "max_time": "19:30",
+  "mean_price": 197.46,
+  "midday_mean": 103.38,
+  "evening_mean": 293.66,
+  "evening_minus_midday": 190.28,
   "cheapest_3h": {
-    "start": "11:45",
-    "end": "14:45",
-    "mean": 107.7
+    "start": "10:15",
+    "end": "13:15",
+    "mean": 59.52
   },
   "is_alert": false,
   "ytd_zero_days": 155,
@@ -34,104 +34,104 @@
   "hourly": [
     {
       "hour": "00:00",
-      "mean": 222.77
+      "mean": 222.56
     },
     {
       "hour": "01:00",
-      "mean": 216.91
+      "mean": 215.97
     },
     {
       "hour": "02:00",
-      "mean": 209.77
+      "mean": 218.13
     },
     {
       "hour": "03:00",
-      "mean": 210.2
+      "mean": 213.21
     },
     {
       "hour": "04:00",
-      "mean": 219.53
+      "mean": 208.02
     },
     {
       "hour": "05:00",
-      "mean": 221.43
+      "mean": 214.73
     },
     {
       "hour": "06:00",
-      "mean": 233.39
+      "mean": 240.13
     },
     {
       "hour": "07:00",
-      "mean": 246.08
+      "mean": 281.77
     },
     {
       "hour": "08:00",
-      "mean": 239.02
+      "mean": 245.44
     },
     {
       "hour": "09:00",
-      "mean": 206.44
+      "mean": 145.28
     },
     {
       "hour": "10:00",
-      "mean": 141.37
+      "mean": 73.31
     },
     {
       "hour": "11:00",
-      "mean": 127.04
+      "mean": 57.52
     },
     {
       "hour": "12:00",
-      "mean": 107.64
+      "mean": 58.72
     },
     {
       "hour": "13:00",
-      "mean": 106.12
+      "mean": 67.62
     },
     {
       "hour": "14:00",
-      "mean": 113.3
+      "mean": 70.55
     },
     {
       "hour": "15:00",
-      "mean": 142.55
+      "mean": 93.73
     },
     {
       "hour": "16:00",
-      "mean": 214.82
+      "mean": 160.65
     },
     {
       "hour": "17:00",
-      "mean": 257.03
+      "mean": 244.91
     },
     {
       "hour": "18:00",
-      "mean": 283.05
+      "mean": 295.2
     },
     {
       "hour": "19:00",
-      "mean": 276.65
+      "mean": 314.23
     },
     {
       "hour": "20:00",
-      "mean": 262.48
+      "mean": 310.63
     },
     {
       "hour": "21:00",
-      "mean": 248.0
+      "mean": 285.76
     },
     {
       "hour": "22:00",
-      "mean": 236.49
+      "mean": 264.02
     },
     {
       "hour": "23:00",
-      "mean": 223.25
+      "mean": 236.91
     }
   ],
   "source": {
-    "file": "marginalpdbc_20261027.1",
+    "file": "marginalpdbc_20261028.1",
     "version": 1,
-    "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261027.1"
+    "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261028.1"
   }
 }
