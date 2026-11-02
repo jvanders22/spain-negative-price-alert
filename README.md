@@ -223,6 +223,28 @@ The same numbers for the latest day are on the site page, with the explainer
 [docs/tariffs.md](docs/tariffs.md). It is an estimate built on stated assumptions, for 2026 only, without
 the power term; it is not a bill and not advice. PVPC is shown as a before-tax context column.
 
+## Use it from an AI agent (MCP)
+
+`negprice mcp` runs a small read-only [MCP](https://modelcontextprotocol.io) server over stdio, so an agent
+can query the stored data instead of scraping: `latest_day`, `day_prices`, `cheapest_window` (by OMIE price
+and by the retail estimate for a tariff, labelled as an estimate, not a bill) and `zero_price_stats`. It
+reads `data/history/` only: no network, no writes.
+
+```bash
+pip install -e '.[mcp]'
+negprice mcp --root .
+```
+
+Config for Claude Desktop or Cursor (use absolute paths):
+
+```json
+{
+  "mcpServers": {
+    "negprice": { "command": "/path/to/.venv/bin/negprice", "args": ["mcp", "--root", "/path/to/spain-negative-price-alert"] }
+  }
+}
+```
+
 ## Run locally
 
 ```bash

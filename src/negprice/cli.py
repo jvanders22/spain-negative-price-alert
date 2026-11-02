@@ -292,6 +292,18 @@ def cmd_estimate(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_mcp(a: argparse.Namespace) -> int:
+    try:
+        from . import mcp_server
+
+        app = mcp_server.build_app(Path(a.root))
+    except ImportError:
+        print("error: the MCP server needs the extra: pip install -e '.[mcp]'", file=sys.stderr)
+        return 1
+    app.run(transport="stdio")
+    return 0
+
+
 def weekly_step_summary(f: dict) -> str:
     """Numbers only. The draft text is NOT put in the step summary (public on a public repo)."""
     end = f["week"]["end"]
@@ -362,6 +374,7 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--start", type=_date, required=True)
     b.add_argument("--end", type=_date, required=True)
     b.add_argument("--sleep", type=float, default=1.0, help="seconds between requests")
+    add("mcp", cmd_mcp, "read-only MCP server (stdio) over the stored history")
     d = retail.Assumptions()
     e = add("estimate", cmd_estimate, "toll-aware retail price ESTIMATE for a stored day (not a bill)")
     e.add_argument("--date", type=_date, required=True)
