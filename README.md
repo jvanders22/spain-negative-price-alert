@@ -127,6 +127,8 @@ Manual runs: Actions → daily-alert → Run workflow, with optional `mode` (`da
 don't commit). The Pages deploy job exists but is disabled unless the repo variable `PAGES_ENABLED` is
 `true` (Pages on the Free plan needs a public repo).
 
+Deploy reliability: both Pages deploys (the one in `alert.yml` and the one in `pages.yml`) share the `pages` concurrency group, and if the first deploy attempt hangs for 5 minutes, it is retried once. This is because on 2026-11-05 a deploy hung on GitHub's side and a redeploy of the same commit worked.
+
 ## Weekly summary
 
 `negprice weekly` summarises one Monday–Sunday week of delivery dates (Europe/Madrid) from
