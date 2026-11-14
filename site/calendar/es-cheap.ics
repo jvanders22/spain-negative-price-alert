@@ -81,43 +81,43 @@ URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
 BEGIN:VEVENT
 UID:cheap-es-20261115-1030Z@jvanders22.github.io
-DTSTAMP:20261114T120000Z
-LAST-MODIFIED:20261114T120000Z
+DTSTAMP:20261114T200000Z
+LAST-MODIFIED:20261114T200000Z
 DTSTART:20261115T103000Z
 DTEND:20261115T110000Z
-SEQUENCE:0
+SEQUENCE:1
 STATUS:CONFIRMED
 SUMMARY:Cheap power ≤ €10 11:30-12:00 (confirmed)
 DESCRIPTION:Wholesale power in Spain is at or below €10/MWh from 11:30 to
   12:00 Madrid time on Sun 15 Nov 2026. Lowest €6.03/MWh\, average €7.8
  6/MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:00 M
- adrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 valle
- . The PVPC price is added when REE publishes it\, around 20:15 the evening
-  before.\nGood hours to run the dishwasher or washing machine\, charge an 
- EV or heat water.\nWholesale price\, not your retail bill.\nSource: OMIE (
- omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/ca
- lendar/
+ adrid time the day before.\nPVPC (regulated 2.0TD tariff): about 6.1 c/kWh
+  in these hours\, period P3 valle (11:30–12:00). Grid tolls and charges 
+ still apply\, so retail power is never free\; it is just at its cheapest.\
+ nGood hours to run the dishwasher or washing machine\, charge an EV or hea
+ t water.\nWholesale price\, not your retail bill.\nSource: OMIE (omie.es).
+  More: https://jvanders22.github.io/spain-negative-price-alert/calendar/
 TRANSP:TRANSPARENT
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
 BEGIN:VEVENT
 UID:cheap-es-20261115-1230Z@jvanders22.github.io
-DTSTAMP:20261114T120000Z
-LAST-MODIFIED:20261114T120000Z
+DTSTAMP:20261114T200000Z
+LAST-MODIFIED:20261114T200000Z
 DTSTART:20261115T123000Z
 DTEND:20261115T130000Z
-SEQUENCE:0
+SEQUENCE:1
 STATUS:CONFIRMED
 SUMMARY:Cheap power ≤ €10 13:30-14:00 (confirmed)
 DESCRIPTION:Wholesale power in Spain is at or below €10/MWh from 13:30 to
   14:00 Madrid time on Sun 15 Nov 2026. Lowest €6.03/MWh\, average €6.0
  3/MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:00 M
- adrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 valle
- . The PVPC price is added when REE publishes it\, around 20:15 the evening
-  before.\nGood hours to run the dishwasher or washing machine\, charge an 
- EV or heat water.\nWholesale price\, not your retail bill.\nSource: OMIE (
- omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/ca
- lendar/
+ adrid time the day before.\nPVPC (regulated 2.0TD tariff): about 5.4 c/kWh
+  in these hours\, period P3 valle (13:30–14:00). Grid tolls and charges 
+ still apply\, so retail power is never free\; it is just at its cheapest.\
+ nGood hours to run the dishwasher or washing machine\, charge an EV or hea
+ t water.\nWholesale price\, not your retail bill.\nSource: OMIE (omie.es).
+  More: https://jvanders22.github.io/spain-negative-price-alert/calendar/
 TRANSP:TRANSPARENT
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
