@@ -5,17 +5,17 @@
   "timezone": "Europe/Madrid",
   "attribution": "Prices: OMIE (omie.es), day-ahead market, Spain zone. Wholesale prices, not your retail bill.",
   "week": {
-    "start": "2026-11-02",
-    "end": "2026-11-08",
-    "label": "Mon 2 Nov – Sun 8 Nov",
+    "start": "2026-11-09",
+    "end": "2026-11-15",
+    "label": "Mon 9 Nov – Sun 15 Nov",
     "dates": [
-      "2026-11-02",
-      "2026-11-03",
-      "2026-11-04",
-      "2026-11-05",
-      "2026-11-06",
-      "2026-11-07",
-      "2026-11-08"
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15"
     ],
     "n_periods": 672,
     "mtu_min": 15
@@ -28,49 +28,49 @@
     "days": 7,
     "by_day": [
       {
-        "date": "2026-11-02",
+        "date": "2026-11-09",
         "weekday": "Mon",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-03",
+        "date": "2026-11-10",
         "weekday": "Tue",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-04",
+        "date": "2026-11-11",
         "weekday": "Wed",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-05",
+        "date": "2026-11-12",
         "weekday": "Thu",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-06",
+        "date": "2026-11-13",
         "weekday": "Fri",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-07",
+        "date": "2026-11-14",
         "weekday": "Sat",
         "n_periods": 96,
         "n_le0": 0,
         "n_neg": 0
       },
       {
-        "date": "2026-11-08",
+        "date": "2026-11-15",
         "weekday": "Sun",
         "n_periods": 96,
         "n_le0": 0,
@@ -79,16 +79,16 @@
     ]
   },
   "lowest": {
-    "price": 0.84,
-    "date": "2026-11-02",
-    "weekday": "Mon",
-    "time": "11:15",
-    "n_periods_at_min": 2
+    "price": 1.09,
+    "date": "2026-11-12",
+    "weekday": "Thu",
+    "time": "13:00",
+    "n_periods_at_min": 6
   },
   "midday_evening": {
-    "midday_mean": 159.86,
-    "evening_mean": 279.62,
-    "spread": 119.76,
+    "midday_mean": 120.15,
+    "evening_mean": 215.93,
+    "spread": 95.78,
     "definition": "Mean price of all periods of the week starting 10:00–17:59 (midday) and 19:00–22:59 (evening), Europe/Madrid; spread = evening − midday, computed from the unrounded means and then rounded."
   },
   "cheapest_3h": {
@@ -98,19 +98,17 @@
       "label": "estimate",
       "tariff": "2.0TD",
       "available": true,
-      "date": "2026-11-02",
-      "weekday": "Mon",
-      "start": "13:15",
-      "end": "16:15",
-      "estimate_eur_kwh": 0.115679,
-      "omie_eur_mwh": 1.54,
+      "date": "2026-11-15",
+      "weekday": "Sun",
+      "start": "11:15",
+      "end": "14:15",
+      "estimate_eur_kwh": 0.082235,
+      "omie_eur_mwh": 16.28,
       "periods": [
-        "P1",
-        "P2"
+        "P3"
       ],
       "period_names": [
-        "P1 (punta)",
-        "P2 (llano)"
+        "P3 (valle)"
       ],
       "units": "EUR/kWh, taxes included",
       "disclaimer": "Estimate only, not a bill and not advice: peninsula, 2026 regulated tables, assumed losses, adjustment services and retailer margin; power term, meter rental and IEE minimums excluded.",
@@ -123,75 +121,75 @@
       }
     },
     "wholesale": {
-      "date": "2026-11-02",
-      "weekday": "Mon",
-      "start": "10:15",
-      "end": "13:15",
-      "omie_eur_mwh": 1.01
+      "date": "2026-11-12",
+      "weekday": "Thu",
+      "start": "12:15",
+      "end": "15:15",
+      "omie_eur_mwh": 1.37
     }
   },
   "zero_days_ytd": {
-    "as_of": "2026-11-08",
+    "as_of": "2026-11-15",
     "year": 2026,
     "ytd_zero_days": 156,
     "prev_year": 2025,
-    "prev_year_as_of": "2025-11-08",
-    "ytd_zero_days_prev_year": 115
+    "prev_year_as_of": "2025-11-15",
+    "ytd_zero_days_prev_year": 116
   },
   "week_over_week": {
-    "previous_week_ending": "2026-11-01",
-    "n_le0_prev": 23,
-    "n_le0_change": -23,
-    "n_neg_prev": 18,
-    "n_neg_change": -18,
-    "days_with_le0_prev": 1,
-    "days_with_le0_change": -1,
-    "spread_prev": 158.3,
-    "spread_change": -38.54
+    "previous_week_ending": "2026-11-08",
+    "n_le0_prev": 0,
+    "n_le0_change": 0,
+    "n_neg_prev": 0,
+    "n_neg_change": 0,
+    "days_with_le0_prev": 0,
+    "days_with_le0_change": 0,
+    "spread_prev": 119.76,
+    "spread_change": -23.98
   },
   "sources": {
     "omie": [
       {
-        "date": "2026-11-02",
-        "file": "marginalpdbc_20261102.1",
+        "date": "2026-11-09",
+        "file": "marginalpdbc_20261109.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261102.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261109.1"
       },
       {
-        "date": "2026-11-03",
-        "file": "marginalpdbc_20261103.1",
+        "date": "2026-11-10",
+        "file": "marginalpdbc_20261110.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261103.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261110.1"
       },
       {
-        "date": "2026-11-04",
-        "file": "marginalpdbc_20261104.1",
+        "date": "2026-11-11",
+        "file": "marginalpdbc_20261111.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261104.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261111.1"
       },
       {
-        "date": "2026-11-05",
-        "file": "marginalpdbc_20261105.1",
+        "date": "2026-11-12",
+        "file": "marginalpdbc_20261112.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261105.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261112.1"
       },
       {
-        "date": "2026-11-06",
-        "file": "marginalpdbc_20261106.1",
+        "date": "2026-11-13",
+        "file": "marginalpdbc_20261113.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261106.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261113.1"
       },
       {
-        "date": "2026-11-07",
-        "file": "marginalpdbc_20261107.1",
+        "date": "2026-11-14",
+        "file": "marginalpdbc_20261114.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261107.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261114.1"
       },
       {
-        "date": "2026-11-08",
-        "file": "marginalpdbc_20261108.1",
+        "date": "2026-11-15",
+        "file": "marginalpdbc_20261115.1",
         "version": 1,
-        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261108.1"
+        "url": "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_20261115.1"
       }
     ],
     "tariffs": {
@@ -229,5 +227,5 @@
       }
     }
   },
-  "chart": "weekly/2026-11-08.png"
+  "chart": "weekly/2026-11-15.png"
 }
