@@ -13,4 +13,25 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/es.ics
+BEGIN:VEVENT
+UID:free-es-20261118-0130Z@jvanders22.github.io
+DTSTAMP:20261117T120000Z
+LAST-MODIFIED:20261117T120000Z
+DTSTART:20261118T013000Z
+DTEND:20261118T050000Z
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Free power 02:30-06:00 (confirmed)
+DESCRIPTION:Wholesale power in Spain is at or below €0/MWh from 02:30 to 
+ 06:00 Madrid time on Wed 18 Nov 2026. Lowest €0.00/MWh\, average €0.00
+ /MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:00 Ma
+ drid time the day before.\nPVPC (regulated 2.0TD tariff): about 7.5 c/kWh 
+ in these hours\, period P3 valle (02:30–06:00). Grid tolls and charges s
+ till apply\, so retail power is never free\; it is just at its cheapest.\n
+ Good hours to run the dishwasher or washing machine\, charge an EV or heat
+  water.\nWholesale price\, not your retail bill.\nSource: OMIE (omie.es). 
+ More: https://jvanders22.github.io/spain-negative-price-alert/calendar/
+TRANSP:TRANSPARENT
+URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
+END:VEVENT
 END:VCALENDAR
