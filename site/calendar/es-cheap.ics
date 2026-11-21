@@ -184,4 +184,46 @@ DESCRIPTION:Wholesale power in Spain is at or below €10/MWh from 09:00 to
 TRANSP:TRANSPARENT
 URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
 END:VEVENT
+BEGIN:VEVENT
+UID:cheap-es-20261122-0130Z@jvanders22.github.io
+DTSTAMP:20261121T120000Z
+LAST-MODIFIED:20261121T120000Z
+DTSTART:20261122T013000Z
+DTEND:20261122T070000Z
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Cheap power ≤ €10 02:30-08:00 (confirmed)
+DESCRIPTION:Wholesale power in Spain is at or below €10/MWh from 02:30 to
+  08:00 Madrid time on Sun 22 Nov 2026. Lowest €3.41/MWh\, average €5.5
+ 0/MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:00 M
+ adrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 valle
+ . The PVPC price is added when REE publishes it\, around 20:15 the evening
+  before.\nGood hours to run the dishwasher or washing machine\, charge an 
+ EV or heat water.\nWholesale price\, not your retail bill.\nSource: OMIE (
+ omie.es). More: https://jvanders22.github.io/spain-negative-price-alert/ca
+ lendar/
+TRANSP:TRANSPARENT
+URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
+END:VEVENT
+BEGIN:VEVENT
+UID:cheap-es-20261122-0730Z@jvanders22.github.io
+DTSTAMP:20261121T120000Z
+LAST-MODIFIED:20261121T120000Z
+DTSTART:20261122T073000Z
+DTEND:20261122T153000Z
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Cheap power ≤ €10 08:30-16:30 (confirmed)
+DESCRIPTION:Wholesale power in Spain is at or below €10/MWh from 08:30 to
+  16:30 Madrid time on Sun 22 Nov 2026. Lowest −€0.30/MWh\, average €
+ 0.57/MWh.\nConfirmed: OMIE day-ahead market result\, published around 13:0
+ 0 Madrid time the day before.\nPVPC (regulated 2.0TD tariff): period P3 va
+ lle. The PVPC price is added when REE publishes it\, around 20:15 the even
+ ing before.\nGood hours to run the dishwasher or washing machine\, charge 
+ an EV or heat water.\nWholesale price\, not your retail bill.\nSource: OMI
+ E (omie.es). More: https://jvanders22.github.io/spain-negative-price-alert
+ /calendar/
+TRANSP:TRANSPARENT
+URL:https://jvanders22.github.io/spain-negative-price-alert/calendar/
+END:VEVENT
 END:VCALENDAR
